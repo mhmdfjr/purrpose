@@ -13,7 +13,7 @@ File ini granular dan cepat basi — update terus selama development (centang, p
 - [x] Pastikan `AGENTS.md` ada di root repo dan ter-load oleh opencode
 - [x] Kirim satu test prompt singkat ke primary model dulu sebelum menjalankan job panjang (kondisi "cold start", sesuai catatan resmi OpenCode Zen)
 - [x] Cek `opencode --version` dan dokumentasi versi terpasang untuk memverifikasi status fitur fallback (`AGENTS.md` Section 2.2) sebelum bergantung padanya
-- [ ] Install dan test `opencode-fallback` plugin (verifikasi nama npm package persis dari README resmi), simulasikan kegagalan primary model untuk memastikan chain fallback ke GLM 5.2 lalu MiniMax M3 benar-benar jalan sebelum dipakai di sesi kerja penting
+- [x] Install dan test `opencode-fallback` plugin (verifikasi nama npm package persis dari README resmi), simulasikan kegagalan primary model untuk memastikan chain fallback ke GLM 5.2 lalu MiniMax M3 benar-benar jalan sebelum dipakai di sesi kerja penting
 
 ## 1. Repo & Frontend Scaffold
 
@@ -53,8 +53,8 @@ File ini granular dan cepat basi — update terus selama development (centang, p
 
 ## 6. CI/CD
 
-- [ ] Connect repo ke Vercel, verifikasi auto-deploy dari branch `main`
-- [ ] Setup deploy Cloud Functions ke project dev (manual script dulu, GitHub Action boleh menyusul)
+- [x] Connect repo ke Vercel, verifikasi auto-deploy dari branch `main`
+- [ ] Setup deploy Cloud Functions ke project (manual script dulu, GitHub Action boleh menyusul)
 - [ ] Set environment variables Firebase client config di Vercel
 
 ## Definition of Done (M0)
