@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "purrpose-app",
+    "dev": "purrpose-app"
+  }
+}
