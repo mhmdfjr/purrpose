@@ -1,9 +1,40 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Default deny-all — M0 skeleton
-    // Per-collection rules akan diisi bertahap mulai M2 sesuai DATABASE.md Section 9
-    // Saat ini semua read/write ditolak dari client; hanya Admin SDK (Cloud Functions) yang bisa write.
+    // M1: users/{uid} — owner can read, write via callable only (Admin SDK)
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+      // Subcollections inherit parent check unless more specific
+      match /tasks/{taskId} {
+        allow read: if request.auth != null && request.auth.uid == uid;
+        allow write: if false;
+      }
+      match /weeklyReports/{weekId} {
+        allow read: if request.auth != null && request.auth.uid == uid;
+        allow write: if false;
+      }
+      match /badges/{badgeId} {
+        allow read: if request.auth != null && request.auth.uid == uid;
+        allow write: if false;
+      }
+    }
+
+    match /leaderboardCycles/{cycleId} {
+      // M6: allow authenticated read for leaderboard (MVP blanket). TODO stricter member check per DATABASE 9
+      allow read: if request.auth != null;
+      allow write: if false;
+      match /groups/{groupId} {
+        allow read: if request.auth != null;
+        allow write: if false;
+        match /entries/{entryId} {
+          allow read: if request.auth != null;
+          allow write: if false;
+        }
+      }
+    }
+
+    // Fallback deny
     match /{document=**} {
       allow read, write: if false;
     }

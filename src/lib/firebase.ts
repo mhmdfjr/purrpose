@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -17,7 +18,17 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+export const functions = getFunctions(app, "asia-southeast2");
 export { app };
+
+// Connect to emulator in local dev if env flag set
+if (process.env.NEXT_PUBLIC_USE_EMULATOR === "true" && typeof window !== "undefined") {
+  try {
+    connectFunctionsEmulator(functions, "localhost", 5001);
+  } catch {
+    // ignore already connected
+  }
+}
 
 // Analytics — only initialize on client, lazy-loaded to avoid SSR errors
 export const getAnalyticsInstance = async () => {

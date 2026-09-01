@@ -1,6 +1,13 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth/session";
+import { UserMenu } from "@/components/UserMenu";
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect("/login");
+  }
   return (
     <div className="min-h-screen flex flex-col">
       <header className="border-b-2 border-border bg-secondary-background">
@@ -24,6 +31,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <Link href="/profile" className="hover:underline underline-offset-4">
               Profile
             </Link>
+            <UserMenu />
           </div>
         </nav>
       </header>

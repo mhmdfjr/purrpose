@@ -8,7 +8,9 @@ admin.initializeApp();
 
 // Export callable functions
 export { ping } from "./callable/ping";
+export { ensureUser, updateProfile } from "./callable/user";
+export { createTask, updateTask, deleteTask, completeTask } from "./callable/tasks";
 
-// Placeholder for future scheduled jobs (M3/M4+)
-// export { taskCutoverJob } from "./scheduled/taskCutover";
-// export { weeklyCycleJob } from "./scheduled/weeklyCycle";
+export { taskCutoverJob } from "./scheduled/taskCutover";
+export { weeklyCycleJob } from "./scheduled/weeklyCycle";
+export { regenerateWeeklySuggestion } from "./callable/weeklyReport";

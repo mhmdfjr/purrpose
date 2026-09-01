@@ -6,6 +6,7 @@ export type TaskCategory = "hustle" | "humble";
 export type TaskStatus = "pending" | "completed" | "missed";
 
 export interface Task {
+  id?: string; // Firestore doc id, not stored as field
   category: TaskCategory;
   title: string;
   level: number; // 1-5
@@ -23,11 +24,14 @@ export interface UserProfile {
   email: string;
   avatarUrl: string | null;
   city: string;
+  province?: string | null;
+  country?: string | null;
   cityManualOverride: boolean;
   timezone: string;
   utcResetHour: number;
   aiReportEnabled: boolean;
   currentGroupId: string | null;
+  currentCycleId?: string | null;
   createdAt: FirestoreTimestamp | Date;
   updatedAt: FirestoreTimestamp | Date;
 }

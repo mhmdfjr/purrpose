@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ping = void 0;
+exports.regenerateWeeklySuggestion = exports.weeklyCycleJob = exports.taskCutoverJob = exports.completeTask = exports.deleteTask = exports.updateTask = exports.createTask = exports.updateProfile = exports.ensureUser = exports.ping = void 0;
 const v2_1 = require("firebase-functions/v2");
 const admin = __importStar(require("firebase-admin"));
 // Global options — region asia-southeast2 (Jakarta) per user decision
@@ -42,7 +42,18 @@ admin.initializeApp();
 // Export callable functions
 var ping_1 = require("./callable/ping");
 Object.defineProperty(exports, "ping", { enumerable: true, get: function () { return ping_1.ping; } });
-// Placeholder for future scheduled jobs (M3/M4+)
-// export { taskCutoverJob } from "./scheduled/taskCutover";
-// export { weeklyCycleJob } from "./scheduled/weeklyCycle";
+var user_1 = require("./callable/user");
+Object.defineProperty(exports, "ensureUser", { enumerable: true, get: function () { return user_1.ensureUser; } });
+Object.defineProperty(exports, "updateProfile", { enumerable: true, get: function () { return user_1.updateProfile; } });
+var tasks_1 = require("./callable/tasks");
+Object.defineProperty(exports, "createTask", { enumerable: true, get: function () { return tasks_1.createTask; } });
+Object.defineProperty(exports, "updateTask", { enumerable: true, get: function () { return tasks_1.updateTask; } });
+Object.defineProperty(exports, "deleteTask", { enumerable: true, get: function () { return tasks_1.deleteTask; } });
+Object.defineProperty(exports, "completeTask", { enumerable: true, get: function () { return tasks_1.completeTask; } });
+var taskCutover_1 = require("./scheduled/taskCutover");
+Object.defineProperty(exports, "taskCutoverJob", { enumerable: true, get: function () { return taskCutover_1.taskCutoverJob; } });
+var weeklyCycle_1 = require("./scheduled/weeklyCycle");
+Object.defineProperty(exports, "weeklyCycleJob", { enumerable: true, get: function () { return weeklyCycle_1.weeklyCycleJob; } });
+var weeklyReport_1 = require("./callable/weeklyReport");
+Object.defineProperty(exports, "regenerateWeeklySuggestion", { enumerable: true, get: function () { return weeklyReport_1.regenerateWeeklySuggestion; } });
 //# sourceMappingURL=index.js.map

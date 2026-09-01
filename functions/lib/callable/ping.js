@@ -36,12 +36,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ping = void 0;
 const https_1 = require("firebase-functions/v2/https");
 const logger = __importStar(require("firebase-functions/logger"));
+const appCheck_1 = require("../utils/appCheck");
 /**
  * Dummy callable for M0 emulator verification.
  * Call from client: getFunctions() + httpsCallable(functions, "ping")
  */
 exports.ping = (0, https_1.onCall)(async (request) => {
     var _a, _b, _c, _d;
+    (0, appCheck_1.enforceAppCheck)(request);
     if (!request.auth && process.env.FUNCTIONS_EMULATOR !== "true") {
         // Allow unauthenticated only in emulator for M0 testing; in production require auth
         logger.info("ping called without auth (allowed in emulator only)");
