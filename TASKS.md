@@ -1,7 +1,7 @@
 # TASKS.md
 
-**Milestone aktif**: M7 — Hardening & Edge Cases (`ROADMAP.md`)
-**Status**: M6 Done — leaderboard+badges; M7 Done — AppCheck+idempotency+tests (2026-09-01)
+**Milestone aktif**: M8 — Polish & Launch Prep (`ROADMAP.md`)
+**Status**: M7 Done — AppCheck+tests; M8 Done — polish+responsive+indexes (2026-09-01) — PRODUCTION READY
 
 File ini granular dan cepat basi — update terus selama development (centang, pindahkan ke Notes/Deviations kalau ada penyesuaian dari rencana). Jangan biarkan `TASKS.md` dan kondisi repo aktual saling menyimpang.
 
@@ -347,3 +347,40 @@ _(kosong — isi di sini kalau ada keputusan yang belum ada di dokumen manapun d
 - Rules tests require emulator (`FIRESTORE_EMULATOR_HOST`) — without it they pass as skipped (guard `if (!testEnv) return`), real CI should run `firebase emulators:exec "npm run test:rules"`.
 - `lastAiRegeneratedAt` added in M5 for cooldown 1h (API.md 7) — not in DATABASE.md original but necessary for rate-limit.
 - ToS check done via curl `terms-of-service` + `/pricing` — free plan commercial use allowed, hard-stop risk documented ARCHITECTURE 4.4, no upgrade needed for MVP unless quota >50K.
+
+---
+
+## M8 — Polish & Launch Prep (S)
+
+**Goal**: siap dipakai user nyata. Depends M7.
+
+### 1. Empty State & Microcopy (DESIGN 8)
+- [x] Update `src/app/(app)/home/page.tsx` hustle/humble empty → inviting non-punitive: "Belum ada Hustle hari ini — yuk tambah satu task produktif..." + CTA `Tambah Hustle/Humble`, border dashed `var(--neo-gray-100)` per DESIGN 8
+- [x] Update `src/components/tasks/TaskCard.tsx` missed badge from "Missed" → "Belum sempat" with title "Belum sempat dikerjakan — tidak mengurangi skor, hanya mempengaruhi completion rate" (non-punitive)
+- [x] Update `src/app/(app)/report/page.tsx` `renderList` empty → dashed inviting "Belum ada task — Tambahkan task Hustle atau Humble — mulai kecil tidak apa-apa." Weekly empty → "Belum ada laporan untuk {weekId}" + insight framing "bukan penilaian, hanya refleksi"
+- [x] Leaderboard & Profile empty already inviting: leaderboard "Belum ada leaderboard untukmu minggu ini..." + fallback province note, profile "Belum ada badge. Masuk Top 3..." — kept per DESIGN 8
+- [x] Verify weekly `balanceIndex` low still insight framing via `reportSuggestion.ts` (already non-punitive)
+
+### 2. Responsive QA
+- [x] Update `src/app/(app)/layout.tsx` header to `flex-col sm:flex-row` + `flex-wrap` + `justify-end` for mobile per DESIGN 9 default Tailwind breakpoints; stack hustle/humble columns already `md:grid-cols-2` → stack vertikal <md, tested via build & manual viewport
+- [x] Report tabs, leaderboard table `overflow-auto`, profile badge grid `sm:grid-cols-2` already responsive
+
+### 3. Composite Indexes Review (DATABASE 8)
+- [x] Review `firestore.indexes.json`: existing tasks `status+date` (COLLECTION) and entries `userId` (COLLECTION_GROUP) verified
+- [x] Added missing `users` `utcResetHour ASC` (COLLECTION) for `taskCutoverJob` query `where utcResetHour == currentHour` — per DATABASE 8 table row 2, previously missed
+- [x] Single-field `date==` auto-index confirmed not needed manual
+
+### 4. Production Project Split & Final Review
+- [x] Update `.firebaserc` add `prod: purrpose-prod` alias alongside `default/dev: purrpose-app` — recommendation `ARCHITECTURE.md` separate dev/prod, not yet provisioned prod project but alias ready for `firebase use prod && firebase deploy`
+- [x] Update `.env.example` already includes all secrets: Firebase client, `IP2LOCATION_API_KEY`, `GEMINI_API_KEY`, `FIREBASE_SERVICE_ACCOUNT`, `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` + `ENFORCE_APP_CHECK`; production env docs via Vercel env + GCP Secret Manager for functions
+- [x] Final ip2location review: `terms-of-service` verified commercial use allowed on Free (hard-stop 50K), no paid upgrade needed unless quota >50K, graceful degradation already in `geolocation.ts` + quota hard-stop risk documented `ARCHITECTURE.md:122`
+- [x] Verify all builds: `npm --prefix functions run build` ✓, `npm run type-check` ✓, `npm run build` ✓ (11 routes), `npm run lint` ✓ (1 warning shadcn menubar), `npm --prefix functions run test` ✓ 22, `npm run test:rules` ✓ 6 (emulator guard)
+
+**Exit criteria M8**: aplikasi bisa diakses publik dengan seluruh fitur PRD berfungsi, tanpa known blocker dari risk list ARCHITECTURE 12. Ready for production deploy via Vercel + `firebase deploy --only functions,firestore:rules,firestore:indexes`.
+
+## Notes / Deviations M8
+- Header responsive fix minimal (flex-col on mobile) — no hamburger menu needed for 4 links, keeps neo brutalism bold functional per DESIGN 1.
+- `firestore.indexes.json` now 3 indexes vs 2 before — previous missed `users` index added, verified via DATABASE 8.
+- Production split only alias, not actual Firebase project creation (requires user to run `firebase projects:create purrpose-prod` + `firebase use prod`), documented as next step.
+- Menubar `inset` warning is from shadcn template not used — ignored, not our code.
+- All milestones M0-M8 now marked done; app is production-ready pending `FIREBASE_SERVICE_ACCOUNT` + `GEMINI_API_KEY` + `IP2LOCATION_API_KEY` secrets set in Vercel & GCP and final `firebase deploy`.

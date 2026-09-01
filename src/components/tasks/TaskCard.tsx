@@ -52,7 +52,7 @@ export function TaskCard({ task, onComplete, onEdit, onDelete, completingId }: P
                 </Badge>
                 <span className="text-xs font-base">{task.durationHours}h</span>
                 {task.score !== null && <span className="text-xs font-bold">Score {task.score}</span>}
-                {isMissed && <Badge variant="neutral" className="text-[10px] bg-[var(--neo-gray-100)]">Missed</Badge>}
+                {isMissed && <Badge variant="neutral" className="text-[10px] bg-[var(--neo-gray-100)]" title="Belum sempat dikerjakan — tidak mengurangi skor, hanya mempengaruhi completion rate">Belum sempat</Badge>}
               </div>
               <div className="flex items-center gap-1 mt-1.5" aria-label={`Level ${task.level} of 5`}>
                 <span className="text-[10px] font-bold mr-1">{task.category === "hustle" ? "Tekanan" : "Relaksasi"}</span>

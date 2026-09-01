@@ -10,31 +10,31 @@ export async function initAppCheck() {
   const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
   const debugToken = process.env.NEXT_PUBLIC_APPCHECK_DEBUG_TOKEN;
 
-  // Allow debug token in dev: set to "true" to use debug provider
-  if (process.env.NODE_ENV !== "production" && (debugToken || !siteKey)) {
+  // Allow debug token in dev: only init if debugToken explicitly set, otherwise skip to avoid 403 with dummy key
+  if (process.env.NODE_ENV !== "production" && debugToken) {
     try {
       const { initializeAppCheck, ReCaptchaEnterpriseProvider } = await import("firebase/app-check");
       // Use debug provider via self.FIREBASE_APPCHECK_DEBUG_TOKEN
-      if (debugToken) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (self as unknown as Record<string, unknown>)["FIREBASE_APPCHECK_DEBUG_TOKEN"] = debugToken;
-      } else {
-        // Auto-generate debug token for emulator
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (self as unknown as Record<string, unknown>)["FIREBASE_APPCHECK_DEBUG_TOKEN"] = true;
+      (self as unknown as Record<string, unknown>)["FIREBASE_APPCHECK_DEBUG_TOKEN"] = debugToken;
+      // Use ReCaptchaEnterprise only if siteKey exists, otherwise use debug provider alone via custom provider
+      if (siteKey) {
+        const provider = new ReCaptchaEnterpriseProvider(siteKey);
+        initializeAppCheck(app, {
+          provider,
+          isTokenAutoRefreshEnabled: true,
+        });
+        initialized = true;
+        console.info("[AppCheck] initialized with debug provider + siteKey");
+        return;
       }
-      // Still need provider, use ReCaptchaEnterprise with dummy key if missing
-      const provider = new ReCaptchaEnterpriseProvider(siteKey || "dummy-key-for-debug");
-      initializeAppCheck(app, {
-        provider,
-        isTokenAutoRefreshEnabled: true,
-      });
-      initialized = true;
-      console.info("[AppCheck] initialized with debug provider");
-      return;
     } catch (e) {
       console.warn("[AppCheck] debug init failed", e);
     }
+  }
+  // Early skip if no siteKey in dev — prevents dummy-key 403
+  if (!siteKey && process.env.NODE_ENV !== "production") {
+    console.info("[AppCheck] skipping init in dev without siteKey (no dummy key to avoid 403)");
+    return;
   }
 
   if (!siteKey) {

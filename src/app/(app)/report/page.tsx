@@ -122,7 +122,10 @@ export default function ReportPage() {
 
   const renderList = (list: TaskDoc[]) =>
     list.length === 0 ? (
-      <p className="text-sm text-muted-foreground">No tasks.</p>
+      <div className="text-center py-4 border-2 border-dashed border-border bg-[var(--neo-gray-100)]">
+        <p className="text-sm font-bold">Belum ada task</p>
+        <p className="text-xs text-muted-foreground mt-1">Tambahkan task Hustle atau Humble — mulai kecil tidak apa-apa.</p>
+      </div>
     ) : (
       <div className="space-y-2">
         {list.map((t) => (
@@ -224,8 +227,9 @@ export default function ReportPage() {
             <p>Loading weekly report...</p>
           ) : !weekly ? (
             <Card className="border-2 border-dashed">
-              <CardContent className="pt-6">
-                <p className="text-sm text-muted-foreground">No weekly report for {weekIdInput}. Reports are generated every Monday 00:00 UTC by weeklyCycleJob. If you just created tasks this week, wait for next cycle or trigger manually via callable (M5).</p>
+              <CardContent className="pt-6 text-center">
+                <p className="text-sm font-bold">Belum ada laporan untuk {weekIdInput}</p>
+                <p className="text-xs text-muted-foreground mt-1">Laporan mingguan dibuat otomatis tiap Senin 00:00 UTC. Jika minggu ini masih berjalan, cek kembali setelah Senin — atau coba minggu sebelumnya. Insight di sini bukan penilaian, hanya refleksi untuk minggu depan.</p>
               </CardContent>
             </Card>
           ) : (

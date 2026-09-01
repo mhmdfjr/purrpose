@@ -9,6 +9,13 @@
       ]
     },
     {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "utcResetHour", "order": "ASCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "entries",
       "queryScope": "COLLECTION_GROUP",
       "fields": [

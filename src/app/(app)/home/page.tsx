@@ -102,7 +102,11 @@ export default function HomePage() {
             </CardHeader>
             <CardContent className="space-y-3">
               {hustle.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No hustle tasks for {selectedDate}. Add your first!</p>
+                <div className="text-center py-6 border-2 border-dashed border-border bg-[var(--neo-gray-100)]">
+                  <p className="text-sm font-bold">Belum ada Hustle hari ini</p>
+                  <p className="text-xs text-muted-foreground mt-1">Yuk tambah satu task produktif untuk mulai — tidak harus berat, 1 jam level 2 juga berarti.</p>
+                  <Button size="sm" className="mt-3" onClick={() => handleAdd("hustle")}>Tambah Hustle</Button>
+                </div>
               ) : (
                 hustle.map((t) => (
                   <TaskCard key={t.id} task={t} onComplete={handleComplete} onEdit={handleEdit} onDelete={handleDelete} completingId={completingId} />
@@ -119,7 +123,11 @@ export default function HomePage() {
             </CardHeader>
             <CardContent className="space-y-3">
               {humble.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No humble tasks for {selectedDate}. Add your first recovery task!</p>
+                <div className="text-center py-6 border-2 border-dashed border-border bg-[var(--neo-gray-100)]">
+                  <p className="text-sm font-bold">Belum ada Humble hari ini</p>
+                  <p className="text-xs text-muted-foreground mt-1">Tambahkan waktu istirahat — tidur, jalan santai, atau journaling agar tetap seimbang.</p>
+                  <Button size="sm" variant="neutral" className="mt-3" onClick={() => handleAdd("humble")}>Tambah Humble</Button>
+                </div>
               ) : (
                 humble.map((t) => (
                   <TaskCard key={t.id} task={t} onComplete={handleComplete} onEdit={handleEdit} onDelete={handleDelete} completingId={completingId} />

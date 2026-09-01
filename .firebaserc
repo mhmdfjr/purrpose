@@ -1,6 +1,7 @@
 {
   "projects": {
     "default": "purrpose-app",
-    "dev": "purrpose-app"
+    "dev": "purrpose-app",
+    "prod": "purrpose-prod"
   }
 }
