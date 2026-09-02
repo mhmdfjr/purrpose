@@ -222,8 +222,8 @@ export default function ReportPage() {
       t.category === "humble" ? (t.score ?? t.level * t.durationHours) : 0,
   }));
   const dailyBarConfig = {
-    hustle: { label: "Hustle", color: "var(--color-hustle)" },
-    humble: { label: "Humble", color: "var(--color-humble)" },
+    hustle: { label: "Hustle", color: "#FF0052" },
+    humble: { label: "Humble", color: "#00C68D" },
   };
 
   const levelData = [1, 2, 3, 4, 5].map((lvl) => ({
@@ -232,19 +232,19 @@ export default function ReportPage() {
     humble: tasks.filter((t) => t.level === lvl && t.category === "humble").length,
   }));
   const levelConfig = {
-    hustle: { label: "Hustle", color: "var(--color-hustle)" },
-    humble: { label: "Humble", color: "var(--color-humble)" },
+    hustle: { label: "Hustle", color: "#FF0052" },
+    humble: { label: "Humble", color: "#00C68D" },
   } satisfies Record<string, { label: string; color: string }>;
 
   const pieData = [
-    { name: "Hustle", value: hustleScore || 0, fill: "var(--color-hustle)" },
-    { name: "Humble", value: humbleScore || 0, fill: "var(--color-humble)" },
-    { name: "Pending", value: pendingCount, fill: "var(--neo-gray-100)" },
+    { name: "Hustle", value: hustleScore || 0, fill: "#FF0052" },
+    { name: "Humble", value: humbleScore || 0, fill: "#00C68D" },
+    { name: "Pending", value: pendingCount, fill: "#F2F2F2" },
   ].filter((d) => d.value > 0);
   const pieConfig = {
-    hustle: { label: "Hustle", color: "var(--color-hustle)" },
-    humble: { label: "Humble", color: "var(--color-humble)" },
-    pending: { label: "Pending", color: "var(--neo-gray-100)" },
+    hustle: { label: "Hustle", color: "#FF0052" },
+    humble: { label: "Humble", color: "#00C68D" },
+    pending: { label: "Pending", color: "#F2F2F2" },
   };
 
   const weeklyTrendData = weeklyHistory.map((w) => ({
@@ -254,9 +254,9 @@ export default function ReportPage() {
     balance: w.balanceIndex,
   }));
   const weeklyTrendConfig = {
-    hustle: { label: "Hustle", color: "var(--color-hustle)" },
-    humble: { label: "Humble", color: "var(--color-humble)" },
-    balance: { label: "Balance", color: "var(--color-info)" },
+    hustle: { label: "Hustle", color: "#FF0052" },
+    humble: { label: "Humble", color: "#00C68D" },
+    balance: { label: "Balance", color: "#0055DA" },
   };
 
   const renderList = (list: TaskDoc[]) =>
@@ -832,11 +832,11 @@ export default function ReportPage() {
                       config={{
                         hustle: {
                           label: "Hustle",
-                          color: "var(--color-hustle)",
+                          color: "#FF0052",
                         },
                         humble: {
                           label: "Humble",
-                          color: "var(--color-humble)",
+                          color: "#00C68D",
                         },
                       }}
                       className="h-65 w-full"
@@ -883,11 +883,11 @@ export default function ReportPage() {
                       config={{
                         hustle: {
                           label: "Hustle",
-                          color: "var(--color-hustle)",
+                          color: "#FF0052",
                         },
                         humble: {
                           label: "Humble",
-                          color: "var(--color-humble)",
+                          color: "#00C68D",
                         },
                       }}
                       className="h-65 w-full"
@@ -898,12 +898,12 @@ export default function ReportPage() {
                             {
                               name: "Hustle",
                               value: weekly.hustleScore,
-                              fill: "var(--color-hustle)",
+                              fill: "#FF0052",
                             },
                             {
                               name: "Humble",
                               value: weekly.humbleScore,
-                              fill: "var(--color-humble)",
+                              fill: "#00C68D",
                             },
                           ]}
                           dataKey="value"
