@@ -216,8 +216,17 @@ export default function ReportPage() {
     [selectedDate],
   );
 
-  // Chart data: daily tasks bar (per task) — 1 bar per task, distinct fill, tooltip shows hustle/humble
-  const BAR_PALETTE = ["#FF0052", "#00C68D", "#FFD400", "#0055DA", "#FF8A65", "#4DB6AC", "#FFB74D", "#7A83FF"] as const;
+  // Chart data: daily tasks bar (per task) - 1 bar per task, distinct fill, tooltip shows hustle/humble
+  const BAR_PALETTE = [
+    "#FF0052",
+    "#00C68D",
+    "#FFD400",
+    "#0055DA",
+    "#FF8A65",
+    "#4DB6AC",
+    "#FFB74D",
+    "#7A83FF",
+  ] as const;
   const dailyBarData = tasks.slice(0, 8).map((t, i) => ({
     task: t.title.slice(0, 12) + (t.title.length > 12 ? "…" : ""),
     fullTitle: t.title,
@@ -402,14 +411,14 @@ export default function ReportPage() {
             <>
               {/* Summary cards */}
               <div className="grid gap-4 md:grid-cols-3">
-                <Card className="border-2 shadow-shadow bg-secondary-background">
-                  <CardHeader className="pb-2">
+                <Card className="border-2 shadow-shadow gap-0 bg-secondary-background">
+                  <CardHeader className="py-0">
                     <CardTitle className="text-xs font-black tracking-widest flex items-center gap-1 text-hustle">
                       <Briefcase className="size-3" strokeWidth={2.5} /> HUSTLE
                       SCORE
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="space-y-2">
                     <p
                       className="text-3xl font-black"
                       style={{ color: "var(--color-hustle)" }}
@@ -430,18 +439,18 @@ export default function ReportPage() {
                             100
                           : 0
                       }
-                      className="mt-2 h-2 [&>div]:bg-hustle"
+                      className="h-2 [&>div]:bg-hustle"
                     />
                   </CardContent>
                 </Card>
-                <Card className="border-2 shadow-shadow bg-secondary-background">
-                  <CardHeader className="pb-2">
+                <Card className="border-2 shadow-shadow gap-0 bg-secondary-background">
+                  <CardHeader className="py-0">
                     <CardTitle className="text-xs font-black tracking-widest flex items-center gap-1 text-humble">
                       <BedDouble className="size-3" strokeWidth={2.5} /> HUMBLE
                       SCORE
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="space-y-2">
                     <p
                       className="text-3xl font-black"
                       style={{ color: "var(--color-humble)" }}
@@ -462,27 +471,27 @@ export default function ReportPage() {
                             100
                           : 0
                       }
-                      className="mt-2 h-2 [&>div]:bg-humble"
+                      className="h-2 [&>div]:bg-humble"
                     />
                   </CardContent>
                 </Card>
-                <Card className="border-2 shadow-shadow bg-accent">
-                  <CardHeader className="pb-2">
+                <Card className="border-2 shadow-shadow gap-0 bg-accent">
+                  <CardHeader className="py-0">
                     <CardTitle className="text-xs font-black tracking-widest flex items-center gap-1">
                       <CheckCircle2 className="size-3" strokeWidth={2.5} />{" "}
                       STATUS
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="space-y-2">
                     <p className="text-sm font-black">
                       Pending: {pendingCount} • Selesai: {completedCount} •
                       Missed: {missedCount}
                     </p>
                     <Progress
                       value={completionRate * 100}
-                      className="mt-2 h-2 [&>div]:bg-black"
+                      className="h-2 [&>div]:bg-black"
                     />
-                    <p className="text-xs font-bold mt-1">
+                    <p className="text-xs font-bold">
                       Completion {(completionRate * 100).toFixed(0)}% • Missed
                       auto cutover midnight
                     </p>
@@ -492,26 +501,32 @@ export default function ReportPage() {
 
               {/* Charts row */}
               <div className="grid gap-4 lg:grid-cols-3">
-                <Card className="border-2 shadow-shadow bg-secondary-background lg:col-span-2">
-                  <CardHeader>
+                <Card className="border-2 shadow-shadow bg-secondary-background gap-0 lg:col-span-2">
+                  <CardHeader className="">
                     <CardTitle className="text-sm font-black flex items-center gap-2">
                       <BarChart3 className="size-4" strokeWidth={2.5} /> Skor
                       per Task (Top 8)
                     </CardTitle>
                     <CardDescription className="font-bold text-xs">
-                      1 bar per task • warna berbeda • tooltip kategori hustle/humble
+                      1 bar per task • warna berbeda • tooltip kategori
+                      hustle/humble
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="">
                     {dailyBarData.length === 0 ? (
-                      <div className="text-center py-10 border-2 border-dashed border-border bg-(--neo-gray-100) font-bold text-sm">
+                      <div className="text-center py-2 border-2 border-dashed border-border bg-(--neo-gray-100) font-bold text-sm">
                         Belum ada data untuk chart
                       </div>
                     ) : (
-                      <ChartContainer config={dailyBarConfig} className="h-[300px] w-full">
-
+                      <ChartContainer
+                        config={dailyBarConfig}
+                        className="max-h-65 w-full p-0 m-0"
+                      >
                         <BarChart accessibilityLayer data={dailyBarData}>
-                          <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 3" />
+                          <CartesianGrid
+                            vertical={false}
+                            stroke="var(--border)"
+                          />
                           <XAxis
                             dataKey="task"
                             tickLine={false}
@@ -519,9 +534,8 @@ export default function ReportPage() {
                             axisLine={false}
                             tick={{ fontSize: 11, fontWeight: 700 }}
                             interval={0}
-                            angle={-14}
                             textAnchor="end"
-                            height={50}
+                            height={30}
                           />
                           <YAxis tick={{ fontSize: 11 }} />
                           <ChartTooltip
@@ -530,12 +544,26 @@ export default function ReportPage() {
                               <ChartTooltipContent
                                 hideLabel
                                 formatter={(value, _name, item) => {
-                                  const p = (item as unknown as { payload?: { category?: string; fullTitle?: string } })?.payload;
-                                  const cat = p?.category === "hustle" ? "Hustle" : p?.category === "humble" ? "Humble" : "";
+                                  const p = (
+                                    item as unknown as {
+                                      payload?: {
+                                        category?: string;
+                                        fullTitle?: string;
+                                      };
+                                    }
+                                  )?.payload;
+                                  const cat =
+                                    p?.category === "hustle"
+                                      ? "Hustle"
+                                      : p?.category === "humble"
+                                        ? "Humble"
+                                        : "";
                                   const title = p?.fullTitle || "";
                                   return (
                                     <div className="flex flex-col gap-1">
-                                      <span className="font-black">{title}</span>
+                                      <span className="font-black">
+                                        {title}
+                                      </span>
                                       <span className="font-bold">
                                         {cat} • Skor {value}
                                       </span>
@@ -551,30 +579,54 @@ export default function ReportPage() {
                             radius={0}
                             activeIndex={2}
                             activeBar={({ ...props }) => {
-                              const fill = (props as unknown as { payload?: { fill?: string } })?.payload?.fill || (props as unknown as { fill?: string }).fill;
-                              return <Rectangle {...(props as unknown as Record<string, unknown>)} fillOpacity={0.8} stroke={fill as string} fill={fill as string} className="stroke-2" />;
+                              const fill =
+                                (
+                                  props as unknown as {
+                                    payload?: { fill?: string };
+                                  }
+                                )?.payload?.fill ||
+                                (props as unknown as { fill?: string }).fill;
+                              return (
+                                <Rectangle
+                                  {...(props as unknown as Record<
+                                    string,
+                                    unknown
+                                  >)}
+                                  fillOpacity={1.0}
+                                  stroke={fill as string}
+                                  fill={fill as string}
+                                  className="stroke-2"
+                                />
+                              );
                             }}
                           >
                             {dailyBarData.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.fill} stroke="var(--border)" strokeWidth={2} />
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={entry.fill}
+                                stroke="var(--border)"
+                                strokeWidth={2}
+                              />
                             ))}
                           </Bar>
                         </BarChart>
                       </ChartContainer>
                     )}
                   </CardContent>
-                  <CardFooter className="flex-col items-start gap-2 text-sm border-t-2 border-border bg-[var(--neo-gray-100)]">
+                  <CardFooter className="flex-col items-start gap-2 text-sm py-0">
                     <div className="flex gap-2 leading-none font-black">
-                      Top 8 task hari ini <TrendingUp className="size-4" strokeWidth={2.5} />
+                      Top 8 task hari ini{" "}
+                      <TrendingUp className="size-4" strokeWidth={2.5} />
                     </div>
                     <div className="text-muted-foreground leading-none font-bold text-xs">
-                      Skor = level × durasi • warna berbeda per bar • cek tooltip untuk hustle/humble
+                      Skor = level × durasi • warna berbeda per bar • cek
+                      tooltip untuk hustle/humble
                     </div>
                   </CardFooter>
                 </Card>
 
-                <Card className="flex flex-col border-2 shadow-shadow bg-secondary-background">
-                  <CardHeader className="items-center py-0">
+                <Card className="flex flex-col border-2 shadow-shadow gap-0 bg-secondary-background">
+                  <CardHeader className="items-center py-0 ">
                     <CardTitle className="text-sm font-black flex items-center gap-2">
                       <PieIcon className="size-4" strokeWidth={2.5} />{" "}
                       Distribusi Skor
@@ -583,7 +635,7 @@ export default function ReportPage() {
                       Hustle rose • Humble green • Pending gray
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="flex-1 p-0 border-2 border-black max-h-45">
+                  <CardContent className="">
                     {pieData.length === 0 ? (
                       <div className="text-center py-4 border-2 border-dashed border-border bg-(--neo-gray-100) font-bold text-sm">
                         Belum ada skor
@@ -591,9 +643,9 @@ export default function ReportPage() {
                     ) : (
                       <ChartContainer
                         config={pieConfig}
-                        className="mx-auto aspect-square max-h-45 py-0 border-2 border-black m-0"
+                        className="max-h-65 w-full aspect-square  p-0 m-0"
                       >
-                        <PieChart className="mx-auto aspect-square p-0">
+                        <PieChart>
                           <ChartTooltip
                             cursor={false}
                             content={<ChartTooltipContent hideLabel />}
@@ -651,7 +703,7 @@ export default function ReportPage() {
                       </ChartContainer>
                     )}
                   </CardContent>
-                  <CardFooter className="flex-col gap-2 text-sm">
+                  <CardFooter className="flex-col gap-2 text-sm py-0 ">
                     <div className="flex items-center gap-2 leading-none font-black">
                       Hustle {hustleScore.toFixed(1)} vs Humble{" "}
                       {humbleScore.toFixed(1)}{" "}
@@ -665,17 +717,17 @@ export default function ReportPage() {
                 </Card>
               </div>
 
-              <Card className="border-2 shadow-shadow bg-secondary-background">
-                <CardHeader>
+              <Card className="border-2 shadow-shadow bg-secondary-background gap-0">
+                <CardHeader className="">
                   <CardTitle className="text-sm font-black flex items-center gap-2">
                     <TrendingUp className="size-4" strokeWidth={2.5} />{" "}
-                    Distribusi Level (1–5)
+                    Distribusi Level (1-5)
                   </CardTitle>
                   <CardDescription className="font-bold text-xs">
-                    Hustle rose • Humble green — stacked neobrutalism
+                    Hustle rose • Humble green
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="">
                   <ChartContainer
                     config={levelConfig}
                     className="h-[220px] w-full"
@@ -742,7 +794,7 @@ export default function ReportPage() {
               </Card>
 
               <div className="grid gap-6 md:grid-cols-2">
-                <Card className="border-hustle bg-white border-2 shadow-shadow">
+                <Card className="border-2 pt-0 shadow-shadow bg-secondary-background">
                   <CardHeader className="border-b-2 border-border py-2 flex flex-row items-center justify-between">
                     <CardTitle className="text-white bg-hustle flex items-center gap-2 p-2 border-2 border-black">
                       <Briefcase className="size-4" strokeWidth={2.5} /> HUSTLE
@@ -751,11 +803,9 @@ export default function ReportPage() {
                       {hustle.length}
                     </Badge>
                   </CardHeader>
-                  <CardContent className="py-2">
-                    {renderList(hustle)}
-                  </CardContent>
+                  <CardContent>{renderList(hustle)}</CardContent>
                 </Card>
-                <Card className="border-humble border-2 bg-white shadow-shadow">
+                <Card className="border-2 pt-0 shadow-shadow bg-secondary-background">
                   <CardHeader className="border-b-2 border-border py-2 flex flex-row items-center justify-between">
                     <CardTitle className="text-black bg-humble flex items-center gap-2 p-2 border-2 border-black">
                       <BedDouble className="size-4" strokeWidth={2.5} /> HUMBLE
@@ -764,9 +814,7 @@ export default function ReportPage() {
                       {humble.length}
                     </Badge>
                   </CardHeader>
-                  <CardContent className="py-2">
-                    {renderList(humble)}
-                  </CardContent>
+                  <CardContent>{renderList(humble)}</CardContent>
                 </Card>
               </div>
             </>
@@ -777,19 +825,15 @@ export default function ReportPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h2 className="text-xl font-heading font-black">Weekly Report</h2>
             <div className="flex items-center gap-2">
-              <Label htmlFor="weekId" className="text-xs font-black">
-                Week ID
-              </Label>
               <Input
                 id="weekId"
                 value={weekIdInput}
                 onChange={(e) => setWeekIdInput(e.target.value)}
                 placeholder="2026-W36"
-                className="w-36 bg-white border-2 font-bold"
+                className="w-36 bg-white border-2 font-bold shadow-shadow"
               />
               <Button
                 variant="neutral"
-                size="sm"
                 className="bg-white font-black"
                 onClick={() => void loadWeekly()}
               >
@@ -816,8 +860,8 @@ export default function ReportPage() {
                 </p>
                 <p className="text-xs font-bold text-foreground/60 mt-1 max-w-xl mx-auto">
                   Laporan mingguan dibuat otomatis tiap Senin 00:00 UTC. Jika
-                  minggu ini masih berjalan, cek kembali setelah Senin — atau
-                  coba minggu sebelumnya. Insight di sini bukan penilaian, hanya
+                  minggu ini masih berjalan, cek kembali setelah Senin atau coba
+                  minggu sebelumnya. Insight di sini bukan penilaian, hanya
                   refleksi.
                 </p>
               </CardContent>
@@ -1039,11 +1083,8 @@ export default function ReportPage() {
                   <CardHeader>
                     <CardTitle className="text-sm font-black flex items-center gap-2">
                       <TrendingUp className="size-4" strokeWidth={2.5} /> Tren 4
-                      Minggu — Balance & Skor
+                      Minggu - Balance & Skor
                     </CardTitle>
-                    <CardDescription className="font-bold text-xs">
-                      Neobrutalism area stacked — border 2px
-                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <ChartContainer

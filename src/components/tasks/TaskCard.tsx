@@ -6,7 +6,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { TaskDoc } from "@/lib/hooks/useTasks";
-import { Pencil, Trash2, Clock3, Award, CheckCircle2, CircleAlert } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  Clock3,
+  Award,
+  CheckCircle2,
+  CircleAlert,
+} from "lucide-react";
 
 type Props = {
   task: TaskDoc;
@@ -16,24 +23,37 @@ type Props = {
   completingId?: string | null;
 };
 
-export function TaskCard({ task, onComplete, onEdit, onDelete, completingId }: Props) {
+export function TaskCard({
+  task,
+  onComplete,
+  onEdit,
+  onDelete,
+  completingId,
+}: Props) {
   const isCompleted = task.status === "completed";
   const isMissed = task.status === "missed";
   const isPending = task.status === "pending";
-  const accent = task.category === "hustle" ? "var(--color-hustle)" : "var(--color-humble)";
-  const accentBg = task.category === "hustle" ? "bg-[var(--color-hustle)]" : "bg-[var(--color-humble)]";
+  const accent =
+    task.category === "hustle" ? "var(--color-hustle)" : "var(--color-humble)";
+  const accentBg =
+    task.category === "hustle"
+      ? "bg-[var(--color-hustle)]"
+      : "bg-[var(--color-humble)]";
 
   return (
     <Card
       className={cn(
         "border-2 py-0 gap-0 overflow-hidden shadow-shadow bg-secondary-background",
         isCompleted && "opacity-80",
-        isMissed && "opacity-60"
+        isMissed && "opacity-60",
       )}
       style={{ borderColor: accent }}
     >
       {/* top stripe */}
-      <div className="h-1.5 w-full border-b-2 border-border" style={{ background: accent }} />
+      <div
+        className="h-1.5 w-full border-b-2 border-border"
+        style={{ background: accent }}
+      />
 
       <CardContent className="p-3 space-y-3">
         <div className="flex items-start gap-3">
@@ -43,7 +63,7 @@ export function TaskCard({ task, onComplete, onEdit, onDelete, completingId }: P
             onCheckedChange={() => isPending && onComplete(task.id)}
             className={cn(
               "mt-0.5 size-5 rounded-none border-2 data-[state=checked]:border-border shadow-sm",
-              isCompleted && "data-[state=checked]:bg-black"
+              isCompleted && "data-[state=checked]:bg-black",
             )}
             aria-label="Complete task"
           />
@@ -52,7 +72,7 @@ export function TaskCard({ task, onComplete, onEdit, onDelete, completingId }: P
             <p
               className={cn(
                 "text-sm font-heading font-black leading-tight break-words",
-                isCompleted && "line-through decoration-2"
+                isCompleted && "line-through decoration-2",
               )}
             >
               {task.title}
@@ -70,7 +90,8 @@ export function TaskCard({ task, onComplete, onEdit, onDelete, completingId }: P
                 {task.category}
               </Badge>
               <span className="inline-flex items-center gap-1 border-2 border-border bg-white px-1.5 py-0.5 text-xs font-bold">
-                <Clock3 className="size-3" strokeWidth={2.5} /> {task.durationHours}h
+                <Clock3 className="size-3" strokeWidth={2.5} />{" "}
+                {task.durationHours}h
               </span>
               {task.score !== null && (
                 <span className="inline-flex items-center gap-1 border-2 border-border bg-[var(--color-accent)] px-1.5 py-0.5 text-xs font-black">
@@ -78,7 +99,10 @@ export function TaskCard({ task, onComplete, onEdit, onDelete, completingId }: P
                 </span>
               )}
               {isCompleted && (
-                <Badge variant="neutral" className="text-[10px] bg-black text-white border-black gap-1">
+                <Badge
+                  variant="neutral"
+                  className="text-[10px] bg-black text-white border-black gap-1"
+                >
                   <CheckCircle2 className="size-3" strokeWidth={2.5} /> Selesai
                 </Badge>
               )}
@@ -88,12 +112,16 @@ export function TaskCard({ task, onComplete, onEdit, onDelete, completingId }: P
                   className="text-[10px] bg-[var(--neo-gray-100)] gap-1"
                   title="Belum sempat dikerjakan — tidak mengurangi skor"
                 >
-                  <CircleAlert className="size-3" strokeWidth={2.5} /> Belum sempat
+                  <CircleAlert className="size-3" strokeWidth={2.5} /> Belum
+                  sempat
                 </Badge>
               )}
             </div>
 
-            <div className="flex items-center gap-1" aria-label={`Level ${task.level} of 5`}>
+            <div
+              className="flex items-center gap-1"
+              aria-label={`Level ${task.level} of 5`}
+            >
               <span className="text-[10px] font-black tracking-widest mr-1">
                 {task.category === "hustle" ? "TEKANAN" : "RELAKSASI"}
               </span>
@@ -101,7 +129,9 @@ export function TaskCard({ task, onComplete, onEdit, onDelete, completingId }: P
                 <span
                   key={i}
                   className="h-3 w-3 border-2 border-border"
-                  style={{ background: i < task.level ? accent : "var(--neo-white)" }}
+                  style={{
+                    background: i < task.level ? accent : "var(--neo-white)",
+                  }}
                 />
               ))}
               <span className="text-xs font-black ml-1">{task.level}/5</span>
@@ -132,13 +162,20 @@ export function TaskCard({ task, onComplete, onEdit, onDelete, completingId }: P
               className={cn(
                 "h-8 flex-1 font-black text-xs gap-1.5 border-2 shadow-sm",
                 accentBg,
-                task.category === "humble" ? "text-black" : "text-white"
+                task.category === "humble" ? "text-black" : "text-white",
               )}
               style={{ borderColor: "black" }}
               onClick={() => onComplete(task.id)}
               disabled={completingId === task.id}
             >
-              {completingId === task.id ? "..." : <><CheckCircle2 className="size-3.5" strokeWidth={2.5}/> Selesai</>}
+              {completingId === task.id ? (
+                "..."
+              ) : (
+                <>
+                  <CheckCircle2 className="size-3.5" strokeWidth={2.5} />{" "}
+                  Selesai
+                </>
+              )}
             </Button>
           </div>
         )}

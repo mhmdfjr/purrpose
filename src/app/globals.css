@@ -77,6 +77,8 @@
   --font-weight-heading: 700;
   --font-sans: var(--font-sans);
   --font-heading: var(--font-heading);
+  --animate-marquee: marquee 5s linear infinite;
+  --animate-marquee2: marquee2 5s linear infinite;
 }
 
 @layer base {
@@ -96,19 +98,19 @@
 
 @keyframes marquee {
   0% {
-    transform: translateX(0);
+    transform: translateX(0%);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translateX(-100%);
   }
 }
 
 @keyframes marquee2 {
   0% {
-    transform: translateX(50%);
+    transform: translateX(100%);
   }
   100% {
-    transform: translateX(0);
+    transform: translateX(0%);
   }
 }
 
