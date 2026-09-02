@@ -19,22 +19,38 @@ function getAdminApp(): App {
     process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ||
     process.env.FIREBASE_PROJECT_ID;
 
-  // Try JSON string (Vercel env) — handle base64 edge; keep \n escaped for JSON.parse
+  // Try JSON string (Vercel env) — handle base64 / multi-line pasted JSON
   if (serviceAccountJson) {
     try {
       let jsonStr = serviceAccountJson.trim();
-      // Handle if user pasted base64 encoded JSON
       if (!jsonStr.startsWith("{")) {
         try {
           jsonStr = Buffer.from(jsonStr, "base64").toString("utf-8");
         } catch {}
       }
-      // Note: DO NOT replace \\n -> \n before JSON.parse — JSON needs \n escaped.
-      // We parse first, then let cert() handle newline conversion.
-      const serviceAccount = JSON.parse(jsonStr);
+      let serviceAccount: Record<string, unknown> | null = null;
+      try {
+        serviceAccount = JSON.parse(jsonStr);
+      } catch (parseErr) {
+        // Handle pasted multi-line JSON where private_key contains actual newlines (invalid JSON)
+        // Fix only the private_key value's internal newlines
+        const errMsg = (parseErr as Error).message || "";
+        if (errMsg.includes("Bad control character") || errMsg.includes("Unexpected token")) {
+          // Replace actual newlines inside private_key string with \n escaped
+          // This handles Vercel env where SA was pasted as pretty-printed multi-line JSON
+          const fixed = jsonStr.replace(/"private_key"\s*:\s*"([\s\S]*?)"\s*,/m, (_m, p1: string) => {
+            const escaped = (p1 as string).replace(/\n/g, "\\n").replace(/\r/g, "");
+            return `"private_key": "${escaped}",`;
+          });
+          serviceAccount = JSON.parse(fixed);
+          console.warn("[firebase-admin] Fixed multi-line private_key newlines for JSON parse");
+        } else {
+          throw parseErr;
+        }
+      }
       app = initializeApp({
-        credential: cert(serviceAccount),
-        projectId: serviceAccount.project_id || projectId,
+        credential: cert(serviceAccount as Parameters<typeof cert>[0]),
+        projectId: (serviceAccount as { project_id?: string }).project_id || projectId,
       });
       return app;
     } catch (e) {
