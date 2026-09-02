@@ -68,6 +68,7 @@ export default function LeaderboardPage() {
   const [search, setSearch] = React.useState("");
   const [sort, setSort] = React.useState<"rank" | "score" | "raw">("rank");
   const [page, setPage] = React.useState(0);
+  const [isDemo, setIsDemo] = React.useState(false);
 
   const load = React.useCallback(async () => {
     if (!user) return;
@@ -109,12 +110,76 @@ export default function LeaderboardPage() {
       }
 
       if (!cId || !gId) {
+        // Fallback: show demo leaderboard (fake users) so new user sees full experience immediately
+        try {
+          const cyclesCol = collection(db, "leaderboardCycles");
+          const cyclesSnap = await getDocs(cyclesCol);
+          if (!cyclesSnap.empty) {
+            const cycles = cyclesSnap.docs.map((d) => ({ id: d.id, ...(d.data() as { weekId: string; status?: string }) }));
+            cycles.sort((a, b) => b.id.localeCompare(a.id));
+            for (const c of cycles) {
+              const groupsCol = collection(db, `leaderboardCycles/${c.id}/groups`);
+              const groupsSnap = await getDocs(groupsCol);
+              if (groupsSnap.empty) continue;
+              // Prefer group with most members (fake group Jakarta has 10)
+              const groupDocs = groupsSnap.docs.sort((a, b) => (b.data() as { memberCount: number }).memberCount - (a.data() as { memberCount: number }).memberCount);
+              const demoGroupDoc = groupDocs[0];
+              if (!demoGroupDoc) continue;
+              const demoGId = demoGroupDoc.id;
+              const demoGroup = demoGroupDoc.data() as GroupDoc;
+              const entriesCol = collection(db, `leaderboardCycles/${c.id}/groups/${demoGId}/entries`);
+              const entriesSnap = await getDocs(query(entriesCol, orderBy("rank", "asc")));
+              if (entriesSnap.empty) continue;
+              const demoList: (Entry & { displayName?: string; avatarUrl?: string | null; city?: string })[] = [];
+              for (const eDoc of entriesSnap.docs) {
+                const entry = eDoc.data() as Entry;
+                try {
+                  const profSnap = await getDoc(doc(db, "users", entry.userId));
+                  const prof = profSnap.exists() ? (profSnap.data() as { displayName?: string; avatarUrl?: string | null; city?: string }) : {};
+                  demoList.push({ ...entry, displayName: prof.displayName || entry.userId.slice(0, 6), avatarUrl: prof.avatarUrl || null, city: prof.city });
+                } catch {
+                  demoList.push(entry);
+                }
+              }
+              demoList.sort((a, b) => a.rank - b.rank);
+              // Add placeholder for current user at bottom if not already in list
+              if (!demoList.some((e) => e.userId === user.uid)) {
+                const profSnap = await getDoc(doc(db, "users", user.uid));
+                const prof = profSnap.exists() ? (profSnap.data() as { displayName?: string; avatarUrl?: string | null; city?: string }) : {};
+                demoList.push({
+                  userId: user.uid,
+                  weeklyRawScore: 0,
+                  balanceIndex: 0,
+                  completionRate: 0,
+                  balanceWeight: 1,
+                  completionWeight: 1,
+                  leaderboardScore: 0,
+                  rank: demoList.length + 1,
+                  displayName: prof.displayName || user.email?.split("@")[0] || "Kamu",
+                  avatarUrl: prof.avatarUrl || user.photoURL || null,
+                  city: prof.city || demoGroup.locationName,
+                });
+              }
+              setCycleId(c.id);
+              setGroupId(demoGId);
+              setGroup(demoGroup);
+              setEntries(demoList);
+              setIsDemo(true);
+              setLoading(false);
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn("[leaderboard] demo fallback failed", e);
+        }
         setCycleId(null);
         setGroupId(null);
         setEntries([]);
+        setIsDemo(false);
         setLoading(false);
         return;
       }
+      setIsDemo(false);
       setCycleId(cId);
       setGroupId(gId);
 
@@ -226,7 +291,8 @@ export default function LeaderboardPage() {
             {group?.locationLevel === "province" && (
               <Badge variant="neutral" className="bg-[var(--neo-gray-100)] border-black font-black text-xs">fallback province</Badge>
             )}
-            <span className="text-xs font-bold text-foreground/60">Minggu {cycleId} • {group?.memberCount} peserta • {group?.status}</span>
+            {isDemo && <Badge className="bg-black text-white border-black font-black text-xs">DEMO — fake data</Badge>}
+            <span className="text-xs font-bold text-foreground/60">Minggu {cycleId} • {group?.memberCount} peserta • {group?.status}{isDemo ? " • preview" : ""}</span>
           </div>
           <p className="text-xs font-bold text-foreground/60 mt-1 flex items-center gap-1">
             <Sparkles className="size-3" strokeWidth={2.5}/> Skor = raw × balanceWeight × completionWeight
@@ -325,6 +391,14 @@ export default function LeaderboardPage() {
             <Progress value={podium[2] ? (podium[2].leaderboardScore / podium[0].leaderboardScore) * 100 : 0} className="mt-2 h-2 bg-white/30 [&>div]:bg-white" />
           </Card>
         </div>
+      )}
+
+      {isDemo && (
+        <Alert className="bg-[var(--color-accent)] text-black border-black">
+          <Sparkles className="size-4" strokeWidth={2.5}/>
+          <AlertTitle className="font-black">Mode Demo — Kompetitor dari data palsu</AlertTitle>
+          <AlertDescription className="font-bold">Kamu belum punya skor minggu ini, jadi leaderboard menampilkan 10 PurrBot Jakarta sebagai contoh. Mulai buat task hari ini — minggu depan kamu akan masuk peringkat nyata bersama mereka!</AlertDescription>
+        </Alert>
       )}
 
       {error && (
