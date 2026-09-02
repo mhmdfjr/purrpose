@@ -34,17 +34,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const syncSession = React.useCallback(async (u: User | null) => {
     try {
       if (u) {
-        const idToken = await u.getIdToken();
+        let idToken: string | null = null;
+        try {
+          idToken = await u.getIdToken();
+        } catch (err) {
+          // Network or AppCheck failure — retry once without AppCheck, then skip session for local dev
+          console.warn("[Auth] getIdToken failed, retrying once", err);
+          try {
+            // Small delay and retry
+            await new Promise((r) => setTimeout(r, 800));
+            idToken = await u.getIdToken(true).catch(() => null);
+          } catch {}
+          if (!idToken) {
+            console.warn("[Auth] skipping session sync — will rely on client auth (check AppCheck enforcement or network)");
+            return;
+          }
+        }
+        if (!idToken) return;
         await fetch("/api/session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ idToken }),
-        });
+        }).catch((e) => console.warn("[Auth] session fetch failed (non-blocking)", e));
       } else {
-        await fetch("/api/session", { method: "DELETE" });
+        await fetch("/api/session", { method: "DELETE" }).catch(() => {});
       }
     } catch (e) {
-      console.error("[Auth] syncSession failed", e);
+      console.warn("[Auth] syncSession failed (non-blocking)", e);
     }
   }, []);
 

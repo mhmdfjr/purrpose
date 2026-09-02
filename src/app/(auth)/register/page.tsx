@@ -32,13 +32,28 @@ export default function RegisterPage() {
   const [loading, setLoading] = React.useState(false);
 
   const syncSessionAndOnboard = async (user: import("firebase/auth").User) => {
-    const idToken = await user.getIdToken();
-    const res = await fetch("/api/session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idToken }),
-    });
-    if (!res.ok) throw new Error("Failed to create session");
+    try {
+      let idToken: string | null = null;
+      try {
+        idToken = await user.getIdToken();
+      } catch (e) {
+        console.warn("[register] getIdToken failed, skipping session", e);
+      }
+      if (idToken) {
+        try {
+          const res = await fetch("/api/session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idToken }),
+          });
+          if (!res.ok) console.warn("[register] session not ok, continuing", res.status);
+        } catch (e) {
+          console.warn("[register] session fetch failed, continuing", e);
+        }
+      }
+    } catch (e) {
+      console.warn("[register] session outer failed", e);
+    }
     try {
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       const ensureUser = getEnsureUserCallable();

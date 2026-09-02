@@ -30,13 +30,32 @@ export default function LoginPage() {
   const [loading, setLoading] = React.useState(false);
 
   const syncSessionAndOnboard = async (user: import("firebase/auth").User) => {
-    const idToken = await user.getIdToken();
-    const res = await fetch("/api/session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idToken }),
-    });
-    if (!res.ok) throw new Error("Failed to create session");
+    // Session sync — non-blocking, graceful for AppCheck/network failures (local dev without SA or site key)
+    try {
+      let idToken: string | null = null;
+      try {
+        idToken = await user.getIdToken();
+      } catch (e) {
+        console.warn("[login] getIdToken failed, skipping session (will use client auth)", e);
+      }
+      if (idToken) {
+        try {
+          const res = await fetch("/api/session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idToken }),
+          });
+          if (!res.ok) {
+            const txt = await res.text().catch(() => "");
+            console.warn("[login] session not ok, continuing with client auth", res.status, txt);
+          }
+        } catch (e) {
+          console.warn("[login] session fetch failed, continuing", e);
+        }
+      }
+    } catch (e) {
+      console.warn("[login] session sync outer failed", e);
+    }
     // Onboard: ensure user doc with timezone
     try {
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -47,7 +66,7 @@ export default function LoginPage() {
       });
     } catch (e) {
       console.warn("[login] ensureUser failed", e);
-      // Don't block login on onboarding failure
+      // Don't block login on onboarding failure (e.g., functions not deployed, Vercel API fallback will handle)
     }
   };
 
