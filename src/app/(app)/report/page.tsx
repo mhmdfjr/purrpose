@@ -57,6 +57,7 @@ import {
   AreaChart,
   Area,
   Label as RechartsLabel,
+  Rectangle,
 } from "recharts";
 import {
   CalendarIcon,
@@ -215,18 +216,20 @@ export default function ReportPage() {
     [selectedDate],
   );
 
-  // Chart data: daily tasks bar (per task)
-  const dailyBarData = tasks.slice(0, 8).map((t) => ({
-    name: t.title.slice(0, 10) + (t.title.length > 10 ? "…" : ""),
-    hustle:
-      t.category === "hustle" ? (t.score ?? t.level * t.durationHours) : 0,
-    humble:
-      t.category === "humble" ? (t.score ?? t.level * t.durationHours) : 0,
+  // Chart data: daily tasks bar (per task) — 1 bar per task, distinct fill, tooltip shows hustle/humble
+  const BAR_PALETTE = ["#FF0052", "#00C68D", "#FFD400", "#0055DA", "#FF8A65", "#4DB6AC", "#FFB74D", "#7A83FF"] as const;
+  const dailyBarData = tasks.slice(0, 8).map((t, i) => ({
+    task: t.title.slice(0, 12) + (t.title.length > 12 ? "…" : ""),
+    fullTitle: t.title,
+    score: t.score ?? t.level * t.durationHours,
+    category: t.category as "hustle" | "humble",
+    fill: BAR_PALETTE[i % BAR_PALETTE.length],
   }));
   const dailyBarConfig = {
-    hustle: { label: "Hustle", color: "#FF0052" },
-    humble: { label: "Humble", color: "#00C68D" },
-  };
+    score: { label: "Skor" },
+  } satisfies Record<string, { label: string; color?: string }>;
+  // keep legacy palette for optional per-bar distinct colors
+  void BAR_PALETTE;
 
   const levelData = [1, 2, 3, 4, 5].map((lvl) => ({
     level: `Lv ${lvl}`,
@@ -496,7 +499,7 @@ export default function ReportPage() {
                       per Task (Top 8)
                     </CardTitle>
                     <CardDescription className="font-bold text-xs">
-                      Hustle rose vs Humble green.
+                      1 bar per task • warna berbeda • tooltip kategori hustle/humble
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -505,80 +508,137 @@ export default function ReportPage() {
                         Belum ada data untuk chart
                       </div>
                     ) : (
-                      <ChartContainer
-                        config={dailyBarConfig}
-                        className="h-60 w-full"
-                      >
-                        <BarChart data={dailyBarData} barGap={4}>
-                          <CartesianGrid
-                            strokeDasharray="3 3"
-                            stroke="var(--border)"
-                          />
+                      <ChartContainer config={dailyBarConfig} className="h-[300px] w-full">
+
+                        <BarChart accessibilityLayer data={dailyBarData}>
+                          <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 3" />
                           <XAxis
-                            dataKey="name"
+                            dataKey="task"
+                            tickLine={false}
+                            tickMargin={10}
+                            axisLine={false}
                             tick={{ fontSize: 11, fontWeight: 700 }}
                             interval={0}
-                            angle={-12}
+                            angle={-14}
                             textAnchor="end"
                             height={50}
                           />
                           <YAxis tick={{ fontSize: 11 }} />
-                          <ChartTooltip content={<ChartTooltipContent />} />
-                          <ChartLegend
-                            content={<ChartLegendContent payload={undefined} />}
+                          <ChartTooltip
+                            cursor={false}
+                            content={
+                              <ChartTooltipContent
+                                hideLabel
+                                formatter={(value, _name, item) => {
+                                  const p = (item as unknown as { payload?: { category?: string; fullTitle?: string } })?.payload;
+                                  const cat = p?.category === "hustle" ? "Hustle" : p?.category === "humble" ? "Humble" : "";
+                                  const title = p?.fullTitle || "";
+                                  return (
+                                    <div className="flex flex-col gap-1">
+                                      <span className="font-black">{title}</span>
+                                      <span className="font-bold">
+                                        {cat} • Skor {value}
+                                      </span>
+                                    </div>
+                                  ) as unknown as string;
+                                }}
+                              />
+                            }
                           />
                           <Bar
-                            dataKey="hustle"
-                            fill="var(--color-hustle)"
-                            radius={0}
-                            stroke="var(--border)"
+                            dataKey="score"
                             strokeWidth={2}
-                          />
-                          <Bar
-                            dataKey="humble"
-                            fill="var(--color-humble)"
                             radius={0}
-                            stroke="var(--border)"
-                            strokeWidth={2}
-                          />
+                            activeIndex={2}
+                            activeBar={({ ...props }) => {
+                              const fill = (props as unknown as { payload?: { fill?: string } })?.payload?.fill || (props as unknown as { fill?: string }).fill;
+                              return <Rectangle {...(props as unknown as Record<string, unknown>)} fillOpacity={0.8} stroke={fill as string} fill={fill as string} className="stroke-2" />;
+                            }}
+                          >
+                            {dailyBarData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.fill} stroke="var(--border)" strokeWidth={2} />
+                            ))}
+                          </Bar>
                         </BarChart>
                       </ChartContainer>
                     )}
                   </CardContent>
+                  <CardFooter className="flex-col items-start gap-2 text-sm border-t-2 border-border bg-[var(--neo-gray-100)]">
+                    <div className="flex gap-2 leading-none font-black">
+                      Top 8 task hari ini <TrendingUp className="size-4" strokeWidth={2.5} />
+                    </div>
+                    <div className="text-muted-foreground leading-none font-bold text-xs">
+                      Skor = level × durasi • warna berbeda per bar • cek tooltip untuk hustle/humble
+                    </div>
+                  </CardFooter>
                 </Card>
 
                 <Card className="flex flex-col border-2 shadow-shadow bg-secondary-background">
-                  <CardHeader className="items-center pb-0">
+                  <CardHeader className="items-center py-0">
                     <CardTitle className="text-sm font-black flex items-center gap-2">
-                      <PieIcon className="size-4" strokeWidth={2.5} /> Distribusi Skor — Donut
+                      <PieIcon className="size-4" strokeWidth={2.5} />{" "}
+                      Distribusi Skor
                     </CardTitle>
                     <CardDescription className="font-bold text-xs">
                       Hustle rose • Humble green • Pending gray
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="flex-1 pb-0">
+                  <CardContent className="flex-1 p-0 border-2 border-black max-h-45">
                     {pieData.length === 0 ? (
-                      <div className="text-center py-10 border-2 border-dashed border-border bg-(--neo-gray-100) font-bold text-sm">
+                      <div className="text-center py-4 border-2 border-dashed border-border bg-(--neo-gray-100) font-bold text-sm">
                         Belum ada skor
                       </div>
                     ) : (
-                      <ChartContainer config={pieConfig} className="mx-auto aspect-square max-h-[250px]">
-                        <PieChart>
-                          <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                          <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={60} strokeWidth={2} stroke="var(--border)">
+                      <ChartContainer
+                        config={pieConfig}
+                        className="mx-auto aspect-square max-h-45 py-0 border-2 border-black m-0"
+                      >
+                        <PieChart className="mx-auto aspect-square p-0">
+                          <ChartTooltip
+                            cursor={false}
+                            content={<ChartTooltipContent hideLabel />}
+                          />
+                          <Pie
+                            data={pieData}
+                            dataKey="value"
+                            nameKey="name"
+                            innerRadius={60}
+                            strokeWidth={2}
+                            stroke="var(--border)"
+                          >
                             {pieData.map((entry, idx) => (
                               <Cell key={idx} fill={entry.fill} />
                             ))}
                             <RechartsLabel
                               content={({ viewBox }) => {
-                                if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                                  const total = pieData.reduce((acc, curr) => acc + curr.value, 0);
+                                if (
+                                  viewBox &&
+                                  "cx" in viewBox &&
+                                  "cy" in viewBox
+                                ) {
+                                  const total = pieData.reduce(
+                                    (acc, curr) => acc + curr.value,
+                                    0,
+                                  );
                                   return (
-                                    <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
-                                      <tspan x={viewBox.cx} y={viewBox.cy} className="fill-foreground text-3xl font-black">
+                                    <text
+                                      x={viewBox.cx}
+                                      y={viewBox.cy}
+                                      textAnchor="middle"
+                                      dominantBaseline="middle"
+                                    >
+                                      <tspan
+                                        x={viewBox.cx}
+                                        y={viewBox.cy}
+                                        className="fill-foreground text-3xl font-black"
+                                      >
                                         {total.toFixed(1)}
                                       </tspan>
-                                      <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 20} className="fill-foreground text-xs font-bold">
+                                      <tspan
+                                        x={viewBox.cx}
+                                        y={(viewBox.cy || 0) + 20}
+                                        className="fill-foreground text-xs font-bold"
+                                      >
                                         Total Skor
                                       </tspan>
                                     </text>
@@ -591,12 +651,15 @@ export default function ReportPage() {
                       </ChartContainer>
                     )}
                   </CardContent>
-                  <CardFooter className="flex-col gap-2 text-sm pt-2">
+                  <CardFooter className="flex-col gap-2 text-sm">
                     <div className="flex items-center gap-2 leading-none font-black">
-                      Hustle {hustleScore.toFixed(1)} vs Humble {humbleScore.toFixed(1)} <TrendingUp className="size-4" strokeWidth={2.5} />
+                      Hustle {hustleScore.toFixed(1)} vs Humble{" "}
+                      {humbleScore.toFixed(1)}{" "}
+                      <TrendingUp className="size-4" strokeWidth={2.5} />
                     </div>
                     <div className="text-muted-foreground leading-none font-bold text-xs">
-                      {completedCount} selesai • {pendingCount} pending {missedCount > 0 ? `• ${missedCount} missed` : ""}
+                      {completedCount} selesai • {pendingCount} pending{" "}
+                      {missedCount > 0 ? `• ${missedCount} missed` : ""}
                     </div>
                   </CardFooter>
                 </Card>
