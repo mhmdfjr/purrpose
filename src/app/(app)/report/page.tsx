@@ -9,6 +9,7 @@ import {
   CardTitle,
   CardContent,
   CardDescription,
+  CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -55,6 +56,7 @@ import {
   Cell,
   AreaChart,
   Area,
+  Label as RechartsLabel,
 } from "recharts";
 import {
   CalendarIcon,
@@ -228,8 +230,10 @@ export default function ReportPage() {
 
   const levelData = [1, 2, 3, 4, 5].map((lvl) => ({
     level: `Lv ${lvl}`,
-    hustle: tasks.filter((t) => t.level === lvl && t.category === "hustle").length,
-    humble: tasks.filter((t) => t.level === lvl && t.category === "humble").length,
+    hustle: tasks.filter((t) => t.level === lvl && t.category === "hustle")
+      .length,
+    humble: tasks.filter((t) => t.level === lvl && t.category === "humble")
+      .length,
   }));
   const levelConfig = {
     hustle: { label: "Hustle", color: "#FF0052" },
@@ -262,7 +266,7 @@ export default function ReportPage() {
   const renderList = (list: TaskDoc[]) =>
     list.length === 0 ? (
       <div className="text-center py-6 border-2 border-dashed border-border bg-(--neo-gray-100)">
-        <Inbox className="mx-auto size-6 text-foreground/40" strokeWidth={2} />
+        <Inbox className="mx-auto size-6 text-foreground" strokeWidth={2} />
         <p className="text-sm font-black mt-2">Belum ada task</p>
         <p className="text-xs text-foreground/60 mt-1">
           Tambahkan task Hustle atau Humble, mulai kecil tidak apa-apa.
@@ -477,7 +481,7 @@ export default function ReportPage() {
                     />
                     <p className="text-xs font-bold mt-1">
                       Completion {(completionRate * 100).toFixed(0)}% • Missed
-                      auto cutover midnight ±1h
+                      auto cutover midnight
                     </p>
                   </CardContent>
                 </Card>
@@ -543,69 +547,103 @@ export default function ReportPage() {
                   </CardContent>
                 </Card>
 
-                <Card className="border-2 shadow-shadow bg-secondary-background">
-                  <CardHeader>
+                <Card className="flex flex-col border-2 shadow-shadow bg-secondary-background">
+                  <CardHeader className="items-center pb-0">
                     <CardTitle className="text-sm font-black flex items-center gap-2">
-                      <PieIcon className="size-4" strokeWidth={2.5} />{" "}
-                      Distribusi Skor
+                      <PieIcon className="size-4" strokeWidth={2.5} /> Distribusi Skor — Donut
                     </CardTitle>
                     <CardDescription className="font-bold text-xs">
-                      Hustle rose, Humble green, Pending gray.
+                      Hustle rose • Humble green • Pending gray
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="flex-1 pb-0">
                     {pieData.length === 0 ? (
                       <div className="text-center py-10 border-2 border-dashed border-border bg-(--neo-gray-100) font-bold text-sm">
                         Belum ada skor
                       </div>
                     ) : (
-                      <ChartContainer
-                        config={pieConfig}
-                        className="h-60 w-full"
-                      >
+                      <ChartContainer config={pieConfig} className="mx-auto aspect-square max-h-[250px]">
                         <PieChart>
-                          <Pie
-                            data={pieData}
-                            dataKey="value"
-                            nameKey="name"
-                            innerRadius={50}
-                            outerRadius={80}
-                            stroke="var(--border)"
-                            strokeWidth={2}
-                          >
+                          <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                          <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={60} strokeWidth={2} stroke="var(--border)">
                             {pieData.map((entry, idx) => (
                               <Cell key={idx} fill={entry.fill} />
                             ))}
+                            <RechartsLabel
+                              content={({ viewBox }) => {
+                                if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                  const total = pieData.reduce((acc, curr) => acc + curr.value, 0);
+                                  return (
+                                    <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
+                                      <tspan x={viewBox.cx} y={viewBox.cy} className="fill-foreground text-3xl font-black">
+                                        {total.toFixed(1)}
+                                      </tspan>
+                                      <tspan x={viewBox.cx} y={(viewBox.cy || 0) + 20} className="fill-foreground text-xs font-bold">
+                                        Total Skor
+                                      </tspan>
+                                    </text>
+                                  );
+                                }
+                              }}
+                            />
                           </Pie>
-                          <ChartTooltip
-                            content={<ChartTooltipContent hideLabel />}
-                          />
-                          <ChartLegend
-                            content={<ChartLegendContent payload={undefined} />}
-                          />
                         </PieChart>
                       </ChartContainer>
                     )}
                   </CardContent>
+                  <CardFooter className="flex-col gap-2 text-sm pt-2">
+                    <div className="flex items-center gap-2 leading-none font-black">
+                      Hustle {hustleScore.toFixed(1)} vs Humble {humbleScore.toFixed(1)} <TrendingUp className="size-4" strokeWidth={2.5} />
+                    </div>
+                    <div className="text-muted-foreground leading-none font-bold text-xs">
+                      {completedCount} selesai • {pendingCount} pending {missedCount > 0 ? `• ${missedCount} missed` : ""}
+                    </div>
+                  </CardFooter>
                 </Card>
               </div>
 
               <Card className="border-2 shadow-shadow bg-secondary-background">
                 <CardHeader>
                   <CardTitle className="text-sm font-black flex items-center gap-2">
-                    <TrendingUp className="size-4" strokeWidth={2.5} /> Distribusi Level (1–5)
+                    <TrendingUp className="size-4" strokeWidth={2.5} />{" "}
+                    Distribusi Level (1–5)
                   </CardTitle>
                   <CardDescription className="font-bold text-xs">
                     Hustle rose • Humble green — stacked neobrutalism
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ChartContainer config={levelConfig} className="h-[220px] w-full">
-                    <AreaChart accessibilityLayer data={levelData} margin={{ left: 12, right: 12 }}>
-                      <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 3" />
-                      <XAxis dataKey="level" tickLine={false} axisLine={false} tickMargin={8} tick={{ fontSize: 12, fontWeight: 700 }} />
-                      <YAxis tickLine={false} axisLine={false} allowDecimals={false} tick={{ fontSize: 12 }} />
-                      <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="line" />} />
+                  <ChartContainer
+                    config={levelConfig}
+                    className="h-[220px] w-full"
+                  >
+                    <AreaChart
+                      accessibilityLayer
+                      data={levelData}
+                      margin={{ left: 12, right: 12 }}
+                    >
+                      <CartesianGrid
+                        vertical={false}
+                        stroke="var(--border)"
+                        strokeDasharray="3 3"
+                      />
+                      <XAxis
+                        dataKey="level"
+                        tickLine={false}
+                        axisLine={false}
+                        tickMargin={8}
+                        tick={{ fontSize: 12, fontWeight: 700 }}
+                      />
+                      <YAxis
+                        tickLine={false}
+                        axisLine={false}
+                        allowDecimals={false}
+                        tick={{ fontSize: 12 }}
+                      />
+                      <ChartTooltip
+                        cursor={false}
+                        content={<ChartTooltipContent indicator="line" />}
+                      />
                       <Area
                         dataKey="humble"
                         type="natural"
@@ -614,7 +652,11 @@ export default function ReportPage() {
                         stackId="a"
                         strokeWidth={2}
                         fillOpacity={0.9}
-                        activeDot={{ fill: "var(--chart-active-dot)", stroke: "var(--border)", strokeWidth: 2 }}
+                        activeDot={{
+                          fill: "var(--chart-active-dot)",
+                          stroke: "var(--border)",
+                          strokeWidth: 2,
+                        }}
                       />
                       <Area
                         dataKey="hustle"
@@ -624,7 +666,11 @@ export default function ReportPage() {
                         stackId="a"
                         strokeWidth={2}
                         fillOpacity={0.9}
-                        activeDot={{ fill: "var(--chart-active-dot)", stroke: "var(--border)", strokeWidth: 2 }}
+                        activeDot={{
+                          fill: "var(--chart-active-dot)",
+                          stroke: "var(--border)",
+                          strokeWidth: 2,
+                        }}
                       />
                       <ChartLegend content={<ChartLegendContent />} />
                     </AreaChart>
@@ -633,29 +679,29 @@ export default function ReportPage() {
               </Card>
 
               <div className="grid gap-6 md:grid-cols-2">
-                <Card className="border-hustle border-2 shadow-shadow">
-                  <CardHeader className="border-b-2 border-border bg-white flex flex-row items-center justify-between">
-                    <CardTitle className="text-hustle flex items-center gap-2">
+                <Card className="border-hustle bg-white border-2 shadow-shadow">
+                  <CardHeader className="border-b-2 border-border py-2 flex flex-row items-center justify-between">
+                    <CardTitle className="text-white bg-hustle flex items-center gap-2 p-2 border-2 border-black">
                       <Briefcase className="size-4" strokeWidth={2.5} /> HUSTLE
                     </CardTitle>
                     <Badge className="bg-hustle text-white border-black font-black">
                       {hustle.length}
                     </Badge>
                   </CardHeader>
-                  <CardContent className="pt-4">
+                  <CardContent className="py-2">
                     {renderList(hustle)}
                   </CardContent>
                 </Card>
-                <Card className="border-humble border-2 shadow-shadow">
-                  <CardHeader className="border-b-2 border-border bg-white flex flex-row items-center justify-between">
-                    <CardTitle className="text-humble flex items-center gap-2">
+                <Card className="border-humble border-2 bg-white shadow-shadow">
+                  <CardHeader className="border-b-2 border-border py-2 flex flex-row items-center justify-between">
+                    <CardTitle className="text-black bg-humble flex items-center gap-2 p-2 border-2 border-black">
                       <BedDouble className="size-4" strokeWidth={2.5} /> HUMBLE
                     </CardTitle>
                     <Badge className="bg-humble text-black border-black font-black">
                       {humble.length}
                     </Badge>
                   </CardHeader>
-                  <CardContent className="pt-4">
+                  <CardContent className="py-2">
                     {renderList(humble)}
                   </CardContent>
                 </Card>
@@ -699,7 +745,7 @@ export default function ReportPage() {
             <Card className="border-2 border-dashed shadow-shadow">
               <CardContent className="pt-6 text-center">
                 <Inbox
-                  className="mx-auto size-8 text-foreground/30"
+                  className="mx-auto size-8 text-foreground"
                   strokeWidth={2}
                 />
                 <p className="text-sm font-black mt-2">
