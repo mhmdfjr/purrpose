@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { TaskDoc } from "@/lib/hooks/useTasks";
+import { Pencil, Trash2, Clock3, Award, CheckCircle2, CircleAlert } from "lucide-react";
 
 type Props = {
   task: TaskDoc;
@@ -20,64 +21,133 @@ export function TaskCard({ task, onComplete, onEdit, onDelete, completingId }: P
   const isMissed = task.status === "missed";
   const isPending = task.status === "pending";
   const accent = task.category === "hustle" ? "var(--color-hustle)" : "var(--color-humble)";
+  const accentBg = task.category === "hustle" ? "bg-[var(--color-hustle)]" : "bg-[var(--color-humble)]";
 
   return (
     <Card
       className={cn(
-        "border-2 py-3 gap-2",
-        isCompleted && "opacity-70 bg-muted/20",
+        "border-2 py-0 gap-0 overflow-hidden shadow-shadow bg-secondary-background",
+        isCompleted && "opacity-80",
         isMissed && "opacity-60"
       )}
       style={{ borderColor: accent }}
     >
-      <CardContent className="px-4 py-2 space-y-2">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex items-start gap-3 flex-1 min-w-0">
-            <Checkbox
-              checked={isCompleted}
-              disabled={!isPending || completingId === task.id}
-              onCheckedChange={() => isPending && onComplete(task.id)}
-              className="mt-1"
-              aria-label="Complete task"
-            />
-            <div className="flex-1 min-w-0">
-              <p className={cn("text-sm font-bold leading-tight break-words", isCompleted && "line-through")}>{task.title}</p>
-              <div className="flex items-center gap-2 mt-1 flex-wrap">
+      {/* top stripe */}
+      <div className="h-1.5 w-full border-b-2 border-border" style={{ background: accent }} />
+
+      <CardContent className="p-3 space-y-3">
+        <div className="flex items-start gap-3">
+          <Checkbox
+            checked={isCompleted}
+            disabled={!isPending || completingId === task.id}
+            onCheckedChange={() => isPending && onComplete(task.id)}
+            className={cn(
+              "mt-0.5 size-5 rounded-none border-2 data-[state=checked]:border-border shadow-sm",
+              isCompleted && "data-[state=checked]:bg-black"
+            )}
+            aria-label="Complete task"
+          />
+
+          <div className="flex-1 min-w-0 space-y-2">
+            <p
+              className={cn(
+                "text-sm font-heading font-black leading-tight break-words",
+                isCompleted && "line-through decoration-2"
+              )}
+            >
+              {task.title}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-1.5">
+              <Badge
+                className="text-[10px] px-2 py-0.5 border-2 font-black uppercase tracking-widest"
+                style={{
+                  background: accent,
+                  color: task.category === "humble" ? "black" : "white",
+                  borderColor: "black",
+                }}
+              >
+                {task.category}
+              </Badge>
+              <span className="inline-flex items-center gap-1 border-2 border-border bg-white px-1.5 py-0.5 text-xs font-bold">
+                <Clock3 className="size-3" strokeWidth={2.5} /> {task.durationHours}h
+              </span>
+              {task.score !== null && (
+                <span className="inline-flex items-center gap-1 border-2 border-border bg-[var(--color-accent)] px-1.5 py-0.5 text-xs font-black">
+                  <Award className="size-3" strokeWidth={2.5} /> {task.score}
+                </span>
+              )}
+              {isCompleted && (
+                <Badge variant="neutral" className="text-[10px] bg-black text-white border-black gap-1">
+                  <CheckCircle2 className="size-3" strokeWidth={2.5} /> Selesai
+                </Badge>
+              )}
+              {isMissed && (
                 <Badge
                   variant="neutral"
-                  className="text-[10px] px-1.5 py-0 border-2 font-black uppercase"
-                  style={{ background: accent, color: "white", borderColor: "black" }}
+                  className="text-[10px] bg-[var(--neo-gray-100)] gap-1"
+                  title="Belum sempat dikerjakan — tidak mengurangi skor"
                 >
-                  {task.category}
+                  <CircleAlert className="size-3" strokeWidth={2.5} /> Belum sempat
                 </Badge>
-                <span className="text-xs font-base">{task.durationHours}h</span>
-                {task.score !== null && <span className="text-xs font-bold">Score {task.score}</span>}
-                {isMissed && <Badge variant="neutral" className="text-[10px] bg-[var(--neo-gray-100)]" title="Belum sempat dikerjakan — tidak mengurangi skor, hanya mempengaruhi completion rate">Belum sempat</Badge>}
-              </div>
-              <div className="flex items-center gap-1 mt-1.5" aria-label={`Level ${task.level} of 5`}>
-                <span className="text-[10px] font-bold mr-1">{task.category === "hustle" ? "Tekanan" : "Relaksasi"}</span>
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <span
-                    key={i}
-                    className="h-2.5 w-2.5 border border-border"
-                    style={{ background: i < task.level ? accent : "var(--neo-white)" }}
-                  />
-                ))}
-                <span className="text-xs ml-1">{task.level}/5</span>
-              </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-1" aria-label={`Level ${task.level} of 5`}>
+              <span className="text-[10px] font-black tracking-widest mr-1">
+                {task.category === "hustle" ? "TEKANAN" : "RELAKSASI"}
+              </span>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <span
+                  key={i}
+                  className="h-3 w-3 border-2 border-border"
+                  style={{ background: i < task.level ? accent : "var(--neo-white)" }}
+                />
+              ))}
+              <span className="text-xs font-black ml-1">{task.level}/5</span>
             </div>
           </div>
-          {isPending && (
-            <div className="flex gap-1 shrink-0">
-              <Button variant="neutral" size="sm" className="h-7 px-2 text-xs" onClick={() => onEdit(task)}>
-                Edit
-              </Button>
-              <Button variant="neutral" size="sm" className="h-7 px-2 text-xs" onClick={() => onDelete(task.id)}>
-                Del
-              </Button>
-            </div>
-          )}
         </div>
+
+        {isPending && (
+          <div className="flex gap-2 pt-1">
+            <Button
+              variant="neutral"
+              size="sm"
+              className="h-8 flex-1 bg-white font-bold text-xs gap-1.5"
+              onClick={() => onEdit(task)}
+            >
+              <Pencil className="size-3.5" strokeWidth={2.5} /> Edit
+            </Button>
+            <Button
+              variant="neutral"
+              size="sm"
+              className="h-8 flex-1 bg-white font-bold text-xs gap-1.5 hover:bg-black hover:text-white"
+              onClick={() => onDelete(task.id)}
+            >
+              <Trash2 className="size-3.5" strokeWidth={2.5} /> Hapus
+            </Button>
+            <Button
+              size="sm"
+              className={cn(
+                "h-8 flex-1 font-black text-xs gap-1.5 border-2 shadow-sm",
+                accentBg,
+                task.category === "humble" ? "text-black" : "text-white"
+              )}
+              style={{ borderColor: "black" }}
+              onClick={() => onComplete(task.id)}
+              disabled={completingId === task.id}
+            >
+              {completingId === task.id ? "..." : <><CheckCircle2 className="size-3.5" strokeWidth={2.5}/> Selesai</>}
+            </Button>
+          </div>
+        )}
+
+        {isCompleted && task.completedAt && (
+          <p className="text-[11px] font-bold text-foreground/60 border-t-2 border-dashed border-border pt-2">
+            ✓ Diselesaikan • +{task.score} pts
+          </p>
+        )}
       </CardContent>
     </Card>
   );
