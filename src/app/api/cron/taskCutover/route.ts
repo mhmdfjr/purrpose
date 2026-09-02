@@ -24,10 +24,11 @@ async function handle(req: NextRequest) {
   try {
     verifyCron(req);
     const db = getAdminFirestore();
-    const now = new Date();
-    const currentHour = now.getUTCHours();
-    const usersSnap = await db.collection("users").where("utcResetHour", "==", currentHour).get();
-    if (usersSnap.empty) return NextResponse.json({ ok: true, hour: currentHour, missed: 0 });
+    // Hobby Vercel: crons limited to once per day (per-hour ±59m), so we run daily and process ALL users
+    // For Pro (hourly schedule 0 * * * *), the original utcResetHour filter would be more efficient,
+    // but daily full scan is idempotent and works for Hobby (tolerance up to 24h vs 1h per ARCHITECTURE 4.2)
+    const usersSnap = await db.collection("users").get();
+    if (usersSnap.empty) return NextResponse.json({ ok: true, missed: 0, mode: "daily Hobby" });
 
     let totalMissed = 0;
     for (const userDoc of usersSnap.docs) {
@@ -58,7 +59,7 @@ async function handle(req: NextRequest) {
       }
       if (batchCount > 0) await batch.commit();
     }
-    return NextResponse.json({ ok: true, hour: currentHour, missed: totalMissed });
+    return NextResponse.json({ ok: true, missed: totalMissed, mode: "daily Hobby" });
   } catch (e) {
     const any = e as { status?: number; message?: string };
     console.error("[cron/taskCutover] error", e);
