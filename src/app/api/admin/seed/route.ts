@@ -23,16 +23,24 @@ const FAKE_USERS: Array<{
   province: string;
   avatarUrl: string | null;
 }> = [
+  // Jakarta (DKI Jakarta) — 8 users
   { uid: "fake-001", displayName: "Ayu • Hustle Queen", email: "fake01@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Ayu" },
   { uid: "fake-002", displayName: "Bima • Steady", email: "fake02@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Bima" },
   { uid: "fake-003", displayName: "Citra • Flow", email: "fake03@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Citra" },
   { uid: "fake-004", displayName: "Dito • Grind", email: "fake04@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Dito" },
   { uid: "fake-005", displayName: "Elsa • Balance", email: "fake05@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Elsa" },
   { uid: "fake-006", displayName: "Fajar • Focus", email: "fake06@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Fajar" },
-  { uid: "fake-007", displayName: "Gita • Calm", email: "fake07@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Gita" },
-  { uid: "fake-008", displayName: "Hadi • Sprint", email: "fake08@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Hadi" },
-  { uid: "fake-009", displayName: "Intan • Zen", email: "fake09@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Intan" },
-  { uid: "fake-010", displayName: "Jaka • Builder", email: "fake10@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Jaka" },
+  { uid: "fake-007", displayName: "Kiki • Vibes", email: "fake07@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Kiki" },
+  { uid: "fake-008", displayName: "Lukman • Smart", email: "fake08@purrpose.test", city: "Jakarta", province: "DKI Jakarta", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Lukman" },
+  // Semarang (Jawa Tengah) — 8 users
+  { uid: "fake-009", displayName: "Gita • Calm", email: "fake09@purrpose.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Gita" },
+  { uid: "fake-010", displayName: "Hadi • Sprint", email: "fake10@purrpose.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Hadi" },
+  { uid: "fake-011", displayName: "Intan • Zen", email: "fake11@purrpose.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Intan" },
+  { uid: "fake-012", displayName: "Jaka • Builder", email: "fake12@purrpose.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Jaka" },
+  { uid: "fake-013", displayName: "Maya • Dreamer", email: "fake13@purrpose.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Maya" },
+  { uid: "fake-014", displayName: "Nina • Glow", email: "fake14@purrpose.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Nina" },
+  { uid: "fake-015", displayName: "Omar • Chill", email: "fake15@purrpose.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Omar" },
+  { uid: "fake-016", displayName: "Putri • Spark", email: "fake16@purrpose.test", city: "Semarang", province: "Jawa Tengah", avatarUrl: "https://api.dicebear.com/7.x/lorelei/svg?seed=Putri" },
 ];
 
 function randInt(min: number, max: number) {
@@ -83,7 +91,7 @@ export async function POST(req: NextRequest) {
     // Check existing fake users
     const existingFakeSnap = await db.collection("users").where("isFake", "==", true).get().catch(() => null);
     const alreadyCount = existingFakeSnap ? existingFakeSnap.size : 0;
-    if (alreadyCount >= 10 && !force) {
+    if (alreadyCount >= 16 && !force) {
       return NextResponse.json({ ok: true, message: "Already seeded", count: alreadyCount, weekId });
     }
 
@@ -271,13 +279,33 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      // Single group for Jakarta (since all 10 fakes same city, group size 15, all fit in one group)
-      const groupId = `g1-jakarta`;
-      const groupRef = cycleRef.collection("groups").doc(groupId);
-      const groupSnap = await groupRef.get();
-      if (!groupSnap.exists || force) {
-        await groupRef.set({ locationLevel: "city", locationName: "Jakarta", memberCount: leaderboardUsers.length, status: "pending" });
-        const scored = leaderboardUsers.map((u) => {
+      // Group fake users by city (city-level grouping: one group per city)
+      const cityMap = new Map<string, typeof leaderboardUsers>();
+      for (const u of leaderboardUsers) {
+        const key = u.city.toLowerCase();
+        if (!cityMap.has(key)) cityMap.set(key, []);
+        cityMap.get(key)!.push(u);
+      }
+
+      let batch = db.batch();
+      let op = 0;
+      const flush = async () => {
+        if (op > 0) await batch.commit();
+        batch = db.batch();
+        op = 0;
+      };
+
+      let groupIdx = 0;
+      for (const [cityKey, cityUsers] of cityMap) {
+        cityUsers.sort((a, b) => a.uid.localeCompare(b.uid));
+        groupIdx++;
+        const groupId = `g${groupIdx}-${cityKey.replace(/\s+/g, "-")}`;
+        const groupRef = cycleRef.collection("groups").doc(groupId);
+        const groupSnap = await groupRef.get();
+        if (!(!groupSnap.exists || force)) continue;
+        const locationName = cityUsers[0].city;
+        await groupRef.set({ locationLevel: "city", locationName, memberCount: cityUsers.length, status: "pending" });
+        const scored = cityUsers.map((u) => {
           const balanceWeight = remote.balanceWeightFloor + (u.balanceIndex / 100) * remote.balanceWeightRange;
           const completionWeight = remote.completionWeightFloor + u.completionRate * remote.completionWeightRange;
           const leaderboardScore = u.weeklyRawScore * balanceWeight * completionWeight;
@@ -285,13 +313,6 @@ export async function POST(req: NextRequest) {
         });
         scored.sort((a, b) => b.leaderboardScore - a.leaderboardScore);
 
-        let batch = db.batch();
-        let op = 0;
-        const flush = async () => {
-          if (op > 0) await batch.commit();
-          batch = db.batch();
-          op = 0;
-        };
         for (let rankIdx = 0; rankIdx < scored.length; rankIdx++) {
           const u = scored[rankIdx];
           const rank = rankIdx + 1;
@@ -316,16 +337,16 @@ export async function POST(req: NextRequest) {
             else if (rank === 2) tier = "silver";
             const badgeId = `${weekId}-${groupId}-${rank}`;
             const badgeRef = db.collection(`users/${u.uid}/badges`).doc(badgeId);
-            batch.set(badgeRef, { tier, cycleId: weekId, groupId, locationName: "Jakarta", awardedAt: FieldValue.serverTimestamp() });
+            batch.set(badgeRef, { tier, cycleId: weekId, groupId, locationName, awardedAt: FieldValue.serverTimestamp() });
             op++;
           }
           if (op >= 400) await flush();
         }
-        await flush();
         await groupRef.update({ status: "scored" });
-        await cycleRef.update({ status: "completed" });
-        leaderboardCreated = true;
       }
+      await flush();
+      await cycleRef.update({ status: "completed" });
+      leaderboardCreated = true;
     }
 
     return NextResponse.json({

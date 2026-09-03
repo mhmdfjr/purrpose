@@ -429,15 +429,15 @@ export default function LeaderboardPage() {
               )}
               {isDemo && (
                 <Badge className="bg-black text-white border-black font-black text-xs">
-                  DEMO (fake data)
+                  DEMO
                 </Badge>
               )}
-              <span className="text-xs font-bold text-foreground/60">
-                Week {cycleId} • {group?.memberCount} members • {group?.status}
-                {isDemo ? " • preview" : ""}
-              </span>
+              <Badge className="bg-info text-white border-black font-black text-xs">
+                Week {cycleId}
+              </Badge>
             </div>
-            <p className="text-xs font-bold text-foreground/60 mt-1 flex items-center gap-1">
+            <p className="text-xs font-bold text-foreground mt-1 flex items-center gap-1">
+              {group?.memberCount} Participants {group?.status}
               <Sparkles className="size-3" strokeWidth={2.5} /> Score = raw ×
               balanceWeight × completionWeight
             </p>
@@ -459,7 +459,7 @@ export default function LeaderboardPage() {
         {/* Self highlight */}
         {selfEntry && (
           <Card className="border-2 shadow-shadow bg-accent">
-            <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <CardContent className="px-4 py-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <Avatar className="size-10 border-2 border-border rounded-none bg-white">
                   <AvatarImage src={selfEntry.avatarUrl || undefined} />
@@ -481,19 +481,19 @@ export default function LeaderboardPage() {
                 </div>
               </div>
               <div className="flex gap-2 text-xs font-black">
-                <div className="border-2 border-border bg-white px-3 py-2 text-center shadow-sm">
+                <div className="border-2 border-border bg-info text-white px-2 py-1 text-center shadow-sm">
                   <div className="text-lg leading-none">
                     {selfEntry.leaderboardScore.toFixed(1)}
                   </div>
                   <div>Score</div>
                 </div>
-                <div className="border-2 border-border bg-black text-white px-3 py-2 text-center shadow-sm">
+                <div className="border-2 border-border bg-hustle text-white px-2 py-1 text-center shadow-sm">
                   <div className="text-lg leading-none">
                     {selfEntry.balanceIndex.toFixed(0)}
                   </div>
                   <div>Balance</div>
                 </div>
-                <div className="border-2 border-border bg-white px-3 py-2 text-center shadow-sm">
+                <div className="border-2 border-border bg-humble px-2 py-1 text-center shadow-sm">
                   <div className="text-lg leading-none">
                     {(selfEntry.completionRate * 100).toFixed(0)}%
                   </div>
@@ -508,26 +508,26 @@ export default function LeaderboardPage() {
         {podium.length >= 3 && (
           <div className="grid gap-4 md:grid-cols-3">
             {/* 2nd */}
-            <Card className="order-2 md:order-1 border-2 shadow-shadow bg-(--neo-gray-100) flex flex-col items-center p-4 text-center">
+            <Card className="order-2 md:order-1 border-2 shadow-shadow bg-(--neo-gray-100) flex flex-col items-center px-4 pb-4 pt-0 gap-2 text-center">
               <div className="flex size-10 items-center justify-center border-2 border-border bg-white shadow-sm">
                 <Medal className="size-5" strokeWidth={2.5} />
               </div>
-              <Badge className="mt-2 bg-white text-black border-black font-black">
+              <Badge className="bg-white text-black border-black font-black">
                 SILVER • #2
               </Badge>
-              <Avatar className="mt-3 size-14 border-2 border-border rounded-none">
+              <Avatar className="size-14 border-2 border-border rounded-none">
                 <AvatarImage src={podium[1]?.avatarUrl || undefined} />
                 <AvatarFallback className="rounded-none font-black text-lg">
                   {(podium[1]?.displayName || "?").slice(0, 1).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <p className="mt-2 font-heading font-black leading-tight">
+              <p className="font-heading font-black leading-tight">
                 {podium[1]?.displayName}
               </p>
               <p className="text-xs font-bold text-foreground/60">
                 {podium[1]?.city}
               </p>
-              <p className="mt-2 font-black text-lg">
+              <p className="font-black text-lg">
                 {podium[1]?.leaderboardScore.toFixed(1)}
               </p>
               <Progress
@@ -538,58 +538,58 @@ export default function LeaderboardPage() {
                       100
                     : 0
                 }
-                className="mt-2 h-2 [&>div]:bg-black"
+                className="h-2 [&>div]:bg-black"
               />
             </Card>
 
             {/* 1st */}
-            <Card className="order-1 md:order-2 border-2 shadow-shadow bg-accent flex flex-col items-center p-4 text-center scale-[1.02]">
+            <Card className="order-1 md:order-2 border-2 shadow-shadow bg-accent flex flex-col items-center px-4 pb-4 pt-0 gap-2 text-center scale-[1.02]">
               <div className="flex size-12 items-center justify-center border-2 border-border bg-black shadow-sm">
                 <Crown className="size-6 text-accent" strokeWidth={2.5} />
               </div>
-              <Badge className="mt-2 bg-black text-white border-black font-black gap-1">
+              <Badge className="bg-black text-white border-black font-black gap-1">
                 <Trophy className="size-3" strokeWidth={2.5} /> GOLD • #1
               </Badge>
-              <Avatar className="mt-3 size-16 border-2 border-border rounded-none bg-white">
+              <Avatar className="size-16 border-2 border-border rounded-none bg-white">
                 <AvatarImage src={podium[0]?.avatarUrl || undefined} />
                 <AvatarFallback className="rounded-none font-black text-xl bg-white">
                   {(podium[0]?.displayName || "?").slice(0, 1).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <p className="mt-2 font-heading font-black text-lg leading-tight">
+              <p className="font-heading font-black text-lg leading-tight">
                 {podium[0]?.displayName}
               </p>
               <p className="text-xs font-bold">{podium[0]?.city}</p>
-              <p className="mt-2 font-black text-xl">
+              <p className="font-black text-xl">
                 {podium[0]?.leaderboardScore.toFixed(1)}
               </p>
-              <div className="mt-2 flex items-center gap-1 text-xs font-black">
+              <div className="flex items-center gap-1 text-xs font-black">
                 <BarChart3 className="size-3" strokeWidth={2.5} /> Balance{" "}
                 {podium[0]?.balanceIndex.toFixed(0)}
               </div>
             </Card>
 
             {/* 3rd */}
-            <Card className="order-3 border-2 shadow-shadow bg-info text-white flex flex-col items-center p-4 text-center">
+            <Card className="order-3 border-2 shadow-shadow bg-info text-white flex flex-col items-center px-4 pb-4 pt-0 gap-2 text-center">
               <div className="flex size-10 items-center justify-center border-2 border-border bg-white shadow-sm">
                 <Award className="size-5 text-info" strokeWidth={2.5} />
               </div>
-              <Badge className="mt-2 bg-white text-black border-black font-black">
+              <Badge className="bg-white text-black border-black font-black">
                 BRONZE • #3
               </Badge>
-              <Avatar className="mt-3 size-14 border-2 border-border rounded-none bg-white">
+              <Avatar className="size-14 border-2 border-border rounded-none bg-white">
                 <AvatarImage src={podium[2]?.avatarUrl || undefined} />
                 <AvatarFallback className="rounded-none font-black text-lg bg-white text-black">
                   {(podium[2]?.displayName || "?").slice(0, 1).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <p className="mt-2 font-heading font-black leading-tight">
+              <p className="font-heading font-black leading-tight">
                 {podium[2]?.displayName}
               </p>
               <p className="text-xs font-bold text-white/80">
                 {podium[2]?.city}
               </p>
-              <p className="mt-2 font-black text-lg">
+              <p className="font-black text-lg">
                 {podium[2]?.leaderboardScore.toFixed(1)}
               </p>
               <Progress
@@ -600,7 +600,7 @@ export default function LeaderboardPage() {
                       100
                     : 0
                 }
-                className="mt-2 h-2 bg-white/30 [&>div]:bg-white"
+                className="h-2 bg-white/30 [&>div]:bg-white"
               />
             </Card>
           </div>
@@ -609,14 +609,13 @@ export default function LeaderboardPage() {
         {isDemo && (
           <Alert className="bg-accent text-black border-black">
             <Sparkles className="size-4" strokeWidth={2.5} />
-            <AlertTitle className="font-black">
+            <AlertTitle className="font-black text-sm">
               Demo Mode - Competitors are Fake
             </AlertTitle>
-            <AlertDescription className="font-bold">
-              U don't have a score for this week yet, so the leaderboard is
-              showing 10 PurrBot Jakarta as examples. Start creating tasks
-              today, and next week you'll be included in the real rankings with
-              them!
+            <AlertDescription className="font-bold text-xs">
+              U don't have a score for this week yet, the leaderboard is showing
+              10 PurrBot. Start creating tasks today, and next week you'll be
+              included in the real rankings with them!
             </AlertDescription>
           </Alert>
         )}
@@ -631,7 +630,7 @@ export default function LeaderboardPage() {
 
         {/* Data table controls */}
         <Card className="border-2 shadow-shadow bg-secondary-background">
-          <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-border bg-white">
+          <CardHeader className="flex flex-col pb-2 sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-border bg-white">
             <CardTitle className="flex items-center gap-2 text-base">
               <BarChart3 className="size-4" strokeWidth={2.5} /> Leaderboard
               Table
@@ -785,7 +784,7 @@ export default function LeaderboardPage() {
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-between border-t-2 border-border bg-(--neo-gray-100) px-4 py-3">
+            <div className="flex items-center justify-between border-t-2 border-border px-4 pt-2">
               <p className="text-xs font-black">
                 Page {page + 1} / {totalPages} • {filteredSorted.length}{" "}
                 participants
@@ -813,34 +812,6 @@ export default function LeaderboardPage() {
                 </Button>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-2 shadow-shadow">
-          <CardHeader>
-            <CardTitle className="text-sm font-black flex items-center gap-2">
-              <Award className="size-4" strokeWidth={2.5} /> Badge Tier
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-xs font-bold space-y-2">
-            <div className="grid gap-2 sm:grid-cols-3">
-              <div className="border-2 border-border bg-accent p-3 flex items-center gap-2 shadow-sm">
-                <Trophy className="size-5" strokeWidth={2.5} />{" "}
-                <span>Gold Medal Rank 1</span>
-              </div>
-              <div className="border-2 border-border bg-(--neo-gray-100) p-3 flex items-center gap-2 shadow-sm">
-                <Medal className="size-5" strokeWidth={2.5} />{" "}
-                <span>Silver Medal Rank 2</span>
-              </div>
-              <div className="border-2 border-border bg-info text-white p-3 flex items-center gap-2 shadow-sm">
-                <Award className="size-5" strokeWidth={2.5} />{" "}
-                <span>Bronze Medal Rank 3</span>
-              </div>
-            </div>
-            <p className="text-foreground/60 font-bold">
-              Badge is saved permanently in profile, tied to week & group. Score
-              = raw × balanceWeight × completionWeight.
-            </p>
           </CardContent>
         </Card>
       </div>
