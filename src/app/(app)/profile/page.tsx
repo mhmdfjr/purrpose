@@ -51,6 +51,8 @@ import {
   Settings,
   Star,
 } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type ProfileDoc = {
   displayName: string;
@@ -75,17 +77,19 @@ type BadgeDoc = {
 
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
-  const [profile, setProfile] = React.useState<ProfileDoc | null>(null);
-  const [loading, setLoading] = React.useState(true);
-  const [saving, setSaving] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
+  const [profile, setProfile] = useState<ProfileDoc | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const [displayName, setDisplayName] = React.useState("");
-  const [city, setCity] = React.useState("");
-  const [timezone, setTimezone] = React.useState("");
-  const [aiEnabled, setAiEnabled] = React.useState(true);
-  const [badges, setBadges] = React.useState<(BadgeDoc & { id: string })[]>([]);
-  const [badgesLoading, setBadgesLoading] = React.useState(true);
+  const [displayName, setDisplayName] = useState("");
+  const [city, setCity] = useState("");
+  const [timezone, setTimezone] = useState("");
+  const [aiEnabled, setAiEnabled] = useState(true);
+  const [badges, setBadges] = useState<(BadgeDoc & { id: string })[]>([]);
+  const [badgesLoading, setBadgesLoading] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const router = useRouter();
 
   const load = React.useCallback(async () => {
     if (!user) return;
@@ -180,8 +184,20 @@ export default function ProfilePage() {
   };
 
   const handleLogout = async () => {
-    await signOut();
-    toast.success("Logout berhasil");
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+
+    try {
+      await signOut();
+
+      toast.success("Logout berhasil");
+      router.replace("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      toast.error("Gagal melakukan logout");
+      setIsLoggingOut(false);
+    }
   };
 
   if (loading) {
@@ -247,11 +263,11 @@ export default function ProfilePage() {
         </div>
 
         {/* Hero + Stats */}
-        <div className="grid gap-4 md:grid-cols-[1.4fr_0.6fr]">
-          <Card className="border-2 shadow-shadow bg-background">
-            <CardContent className="p-6">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
+          <Card className="border-2 shadow-shadow bg-background cols-span-1 md:col-span-2">
+            <CardContent className="px-6 py-0 md:py-2 lg:py-4">
               <div className="flex gap-4">
-                <Avatar className="size-28 border-2 border-border rounded-none shadow-shadow bg-accent shrink-0">
+                <Avatar className="size-20 md:size-28 border-2 border-border rounded-none shadow-shadow bg-accent shrink-0">
                   <AvatarImage
                     src={profile?.avatarUrl || user.photoURL || undefined}
                   />
@@ -260,45 +276,46 @@ export default function ProfilePage() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <h2 className="font-heading text-xl font-black leading-tight truncate">
+                  <h2 className="font-heading text-lg md:text-xl font-black leading-tight truncate">
                     {profile?.displayName || displayName || "-"}
                   </h2>
-                  <p className="text-sm font-bold text-foreground/60 truncate">
+                  <p className="text-xs md:text-sm font-bold text-foreground/60 truncate">
                     {user.email}
                   </p>
                   <div className="mt-2 flex flex-wrap gap-1.5">
-                    <Badge className="bg-humble border-black font-black gap-1">
-                      <MapPin className="size-3" strokeWidth={2.5} />{" "}
+                    <Badge className="bg-humble text-xs md:text-sm border-black font-black gap-1">
+                      <MapPin className="size-2 md:size-3" strokeWidth={2.5} />{" "}
                       {profile?.city || city || "-"}
                       {profile?.province ? `, ${profile.province}` : ""}
                     </Badge>
                     {profile?.cityManualOverride ? (
-                      <Badge className="bg-info text-white border-black font-black text-xs">
+                      <Badge className="bg-info text-white border-black font-black text-xs md:text-sm">
                         manual
                       </Badge>
                     ) : (
                       <Badge
                         variant="neutral"
-                        className="bg-hustle border-black font-black text-xs"
+                        className="bg-hustle border-black font-black text-xs md:text-sm"
                       >
                         auto
                       </Badge>
                     )}
                     <Badge
                       variant="neutral"
-                      className="bg-accent border-black font-black gap-1"
+                      className="text-xs md:text-sm bg-accent border-black font-black gap-1"
                     >
-                      <Clock3 className="size-3" strokeWidth={2.5} /> UTC+
+                      <Clock3 className="size-2 md:size-3" strokeWidth={2.5} />{" "}
+                      UTC+
                       {profile?.utcResetHour ?? "-"}
                     </Badge>
                   </div>
-                  <div className="mt-2 flex flex-wrap gap-1.5 text-xs font-bold">
-                    <span className="border-2 border-border font-black bg-humble px-2 py-1 inline-flex items-center gap-1">
-                      <Globe className="size-3" strokeWidth={2.5} />{" "}
+                  <div className="mt-2 flex flex-wrap gap-1.5 font-bold">
+                    <span className="text-xs md:text-sm border-2 border-border font-black bg-humble px-2 py-1 inline-flex items-center gap-1">
+                      <Globe className="size-2 md:size-3" strokeWidth={2.5} />{" "}
                       {profile?.timezone || timezone || "-"}
                     </span>
                     {joinDate && (
-                      <span className="border-2 border-border bg-info font-black text-white px-2 py-1">
+                      <span className="text-xs md:text-sm border-2 border-border bg-info font-black text-white px-2 py-1">
                         Joined on {joinDate}
                       </span>
                     )}
@@ -346,7 +363,7 @@ export default function ProfilePage() {
             </CardContent>
           </Card>
 
-          <div className="space-y-4">
+          <div className="space-y-4 cols-span-1 md:col-span-1">
             <Card className="border-2 shadow-shadow bg-accent">
               <CardHeader className="border-b-2 pb-2 border-border">
                 <CardTitle className="text-sm font-black flex items-center gap-1">
@@ -412,7 +429,7 @@ export default function ProfilePage() {
             </p>
           </CardHeader>
           <form onSubmit={handleSave}>
-            <CardContent className="space-y-4 py-6">
+            <CardContent className="space-y-4 py-2 md:py-4 lg:py-6">
               {error && (
                 <Alert variant="destructive">
                   <AlertTriangle className="size-4" strokeWidth={2.5} />

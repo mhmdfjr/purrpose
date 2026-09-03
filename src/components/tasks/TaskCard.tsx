@@ -59,7 +59,7 @@ export function TaskCard({
             disabled={!isPending || completingId === task.id}
             onCheckedChange={() => isPending && onComplete(task.id)}
             className={cn(
-              "mt-0.5 size-5 rounded-none border-2 data-[state=checked]:border-border shadow-sm",
+              "mt-0.5 size-4 md:size-5 rounded-none border-2 data-[state=checked]:border-border shadow-sm",
               isCompleted && "data-[state=checked]:bg-black",
             )}
             aria-label="Complete task"
@@ -100,8 +100,7 @@ export function TaskCard({
                   variant="neutral"
                   className="text-xs bg-black font-black text-white border-black gap-1"
                 >
-                  <CheckCircle2 className="size-3" strokeWidth={2.5} />{" "}
-                  Completed
+                  <CheckCircle2 className="size-3" strokeWidth={2.5} /> Done
                 </Badge>
               )}
               {isMissed && (

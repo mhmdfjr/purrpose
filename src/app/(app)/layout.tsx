@@ -24,16 +24,16 @@ export default async function AppLayout({
   }
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="sticky top-0 z-50 border-b-2 border-border bg-secondary-background">
+      <header className="fixed bottom-0 left-0 right-0 md:sticky md:top-0 z-50 border-t-2 md:border-t-0 md:border-b-2 border-border bg-secondary-background">
         <div className="mx-auto max-w-6xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-4 py-3">
           <Link
             href="/home"
-            className="font-heading text-xl font-black tracking-tight"
+            className="font-heading hidden md:block text-xl font-black tracking-tight"
           >
             PURRPOSE<span className="text-hustle">.</span>
             <span className="text-humble">.</span>
           </Link>
-          <nav className="hidden items-center gap-6 font-heading font-bold md:flex">
+          <nav className="flex items-center justify-between gap-6 font-heading font-bold">
             <Link href="/home" className="hover:underline underline-offset-4">
               Home
             </Link>
@@ -60,7 +60,7 @@ export default async function AppLayout({
       {children}
 
       <footer className="border-t-2 border-border bg-secondary-background">
-        <div className="mx-auto max-w-6xl px-4 py-6">
+        <div className="mx-auto max-w-6xl px-4 pt-4 pb-16 md:pb-4">
           <div className="flex flex-col gap-3 text-sm md:flex-row md:items-center md:justify-between">
             <div className="font-heading font-black">
               PURRPOSE: Track Hustle & Humble.

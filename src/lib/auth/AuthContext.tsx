@@ -27,7 +27,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    // M7 App Check init (non-blocking, graceful if env not set)
     import("@/lib/appCheck").then((m) => m.initAppCheck().catch(() => {}));
   }, []);
 
@@ -46,7 +45,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             idToken = await u.getIdToken(true).catch(() => null);
           } catch {}
           if (!idToken) {
-            console.warn("[Auth] skipping session sync — will rely on client auth (check AppCheck enforcement or network)");
+            console.warn(
+              "[Auth] skipping session sync — will rely on client auth (check AppCheck enforcement or network)",
+            );
             return;
           }
         }
@@ -55,7 +56,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ idToken }),
-        }).catch((e) => console.warn("[Auth] session fetch failed (non-blocking)", e));
+        }).catch((e) =>
+          console.warn("[Auth] session fetch failed (non-blocking)", e),
+        );
       } else {
         await fetch("/api/session", { method: "DELETE" }).catch(() => {});
       }

@@ -12,7 +12,7 @@ export function UserMenu() {
   if (!user) return null;
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="hidden md:flex items-center gap-2">
       <span className="text-xs hidden sm:inline">{user.email}</span>
       <Button
         size="sm"

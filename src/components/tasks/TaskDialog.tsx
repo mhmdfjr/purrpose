@@ -126,7 +126,7 @@ export function TaskDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-w-[95%] md:max-w-lg">
         <DialogHeader>
           <DialogTitle>{isEdit ? "Edit Task" : "Add Task"}</DialogTitle>
           <DialogDescription>
@@ -197,7 +197,7 @@ export function TaskDialog({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols1 md:grid-cols-2 gap-4">
             <div className="grid gap-2">
               <Label htmlFor="duration">Duration (hours) • 24h Daily cap</Label>
               <Input
@@ -244,7 +244,7 @@ export function TaskDialog({
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="flex justify-end gap-2">
             <Button
               type="button"
               className="bg-hustle"

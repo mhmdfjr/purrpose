@@ -508,7 +508,7 @@ export default function ReportPage() {
                         details.
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="">
+                    <CardContent className="w-full">
                       {dailyBarData.length === 0 ? (
                         <div className="text-center py-2 border-2 border-dashed border-border bg-(--neo-gray-100) font-bold text-sm">
                           U don't have data for chart yet. Add Hustle/Humble
@@ -517,7 +517,7 @@ export default function ReportPage() {
                       ) : (
                         <ChartContainer
                           config={dailyBarConfig}
-                          className="max-h-65 w-full p-0 m-0"
+                          className="md:max-h-65 w-full p-0 m-0 "
                         >
                           <BarChart accessibilityLayer data={dailyBarData}>
                             <CartesianGrid
@@ -528,13 +528,12 @@ export default function ReportPage() {
                               dataKey="task"
                               tickLine={false}
                               tickMargin={10}
-                              axisLine={false}
-                              tick={{ fontSize: 11, fontWeight: 700 }}
+                              // axisLine={false}
+                              // tick={{ fontSize: 11, fontWeight: 700 }}
                               interval={0}
                               textAnchor="end"
                               height={30}
                             />
-                            <YAxis tick={{ fontSize: 11 }} />
                             <ChartTooltip
                               cursor={false}
                               content={
@@ -593,7 +592,7 @@ export default function ReportPage() {
                                     fillOpacity={1.0}
                                     stroke={fill as string}
                                     fill={fill as string}
-                                    className="stroke-2"
+                                    className="border-2 border-border"
                                   />
                                 );
                               }}
@@ -753,12 +752,12 @@ export default function ReportPage() {
                           tickMargin={8}
                           tick={{ fontSize: 12, fontWeight: 700 }}
                         />
-                        <YAxis
+                        {/* <YAxis
                           tickLine={false}
                           axisLine={false}
                           allowDecimals={false}
                           tick={{ fontSize: 12 }}
-                        />
+                        /> */}
                         <ChartTooltip
                           cursor={false}
                           content={<ChartTooltipContent indicator="line" />}

@@ -39,6 +39,13 @@ import {
   CheckCircle2,
   Inbox,
 } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel";
 
 function todayStr() {
   const d = new Date();
@@ -128,7 +135,7 @@ export default function HomePage() {
     <main className="flex-1 mx-auto w-full bg-background">
       <div className="space-y-6 mx-auto w-full max-w-6xl p-4 md:p-6">
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-3">
               <Avatar className="size-12 border-2 border-border shadow-shadow rounded-none bg-accent">
                 <AvatarImage src={user?.photoURL || undefined} />
@@ -137,9 +144,6 @@ export default function HomePage() {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <p className="text-xs font-black tracking-widest flex items-center gap-1">
-                  <Sparkles className="size-3" strokeWidth={2.5} /> TODAY
-                </p>
                 <h1 className="font-heading text-2xl font-black leading-none">
                   Hello, {displayName}!
                 </h1>
@@ -278,14 +282,14 @@ export default function HomePage() {
 
           {/* Balance hint */}
           <div className="flex flex-wrap gap-2 text-xs font-black">
-            <span className="border-2 border-border bg-accent px-2 py-1 shadow-sm flex items-center gap-1">
+            <span className="border-2 border-border bg-accent py-1 px-1 shadow-sm flex items-center gap-1">
               <BarChart3 className="size-3" strokeWidth={2.5} /> Balance: Hustle{" "}
               {totalHustleScore.toFixed(1)} vs Humble{" "}
               {totalHumbleScore.toFixed(1)}
             </span>
-            <span className="border-2 border-border bg-white px-2 py-1 shadow-sm flex items-center gap-1">
+            <span className="border-2 border-border bg-white py-1 px-1 shadow-sm flex items-center gap-1">
               <Trophy className="size-3" strokeWidth={2.5} /> {tasks.length}{" "}
-              total tasks today
+              Tasks Today
             </span>
           </div>
         </div>
@@ -312,7 +316,7 @@ export default function HomePage() {
           </Alert>
         )}
 
-        {/* Main grid */}
+        {/* Main Grid / Carousel Container */}
         {loading ? (
           <div className="grid gap-6 md:grid-cols-2">
             {[0, 1].map((i) => (
@@ -328,125 +332,150 @@ export default function HomePage() {
             ))}
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2">
-            <Card className="border-2 shadow-shadow bg-secondary-background flex flex-col">
-              <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2 border-b-2 border-border bg-white">
-                <div className="flex items-center gap-2">
-                  <div className="flex size-8 items-center justify-center border-2 border-border bg-hustle">
-                    <Briefcase
-                      className="size-4 text-white"
-                      strokeWidth={2.5}
-                    />
-                  </div>
-                  <CardTitle className="text-hustle text-lg">HUSTLE</CardTitle>
-                  <Badge className="bg-hustle text-white border-black font-black">
-                    {hustle.length}
-                  </Badge>
-                </div>
-                <Button
-                  size="sm"
-                  className="bg-hustle text-white border-black font-black shadow-shadow"
-                  onClick={() => handleAdd("hustle")}
-                >
-                  <Plus className="size-3.5" strokeWidth={2.5} /> Hustle
-                </Button>
-              </CardHeader>
-              <CardContent className="space-y-3 flex-1">
-                {hustle.length === 0 ? (
-                  <div className="text-center py-8 border-2 border-dashed border-border bg-(--neo-gray-100)">
-                    <Inbox
-                      className="mx-auto size-8 text-foreground/40"
-                      strokeWidth={2}
-                    />
-                    <p className="mt-2 text-sm font-black">
-                      U don't have any Hustle today
-                    </p>
-                    <p className="mx-auto mt-1 max-w-65 text-xs leading-relaxed text-foreground/60">
-                      Let's add some Hustle: work, study, or side project to
-                      earn points and stay productive.
-                    </p>
-                    <Button
-                      size="sm"
-                      className="mt-4 bg-hustle text-white border-black font-black"
-                      onClick={() => handleAdd("hustle")}
-                    >
-                      <Plus className="size-3.5" strokeWidth={2.5} /> Add Hustle
-                    </Button>
-                  </div>
-                ) : (
-                  hustle.map((t) => (
-                    <TaskCard
-                      key={t.id}
-                      task={t}
-                      onComplete={handleComplete}
-                      onEdit={handleEdit}
-                      onDelete={handleDelete}
-                      completingId={completingId}
-                    />
-                  ))
-                )}
-              </CardContent>
-            </Card>
+          <div className="w-full">
+            <Carousel opts={{ align: "start" }} className="w-full">
+              <CarouselContent className="-ml-4">
+                {/* HUSTLE CARD */}
+                <CarouselItem className="pl-4 basis-full md:basis-1/2">
+                  <Card className="h-full border-2 shadow-shadow bg-secondary-background flex flex-col">
+                    <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2 border-b-2 border-border bg-white">
+                      <div className="flex items-center gap-2">
+                        <div className="flex size-8 items-center justify-center border-2 border-border bg-hustle">
+                          <Briefcase
+                            className="size-4 text-white"
+                            strokeWidth={2.5}
+                          />
+                        </div>
+                        <CardTitle className="text-hustle text-lg">
+                          HUSTLE
+                        </CardTitle>
+                        <Badge className="bg-hustle text-white border-black font-black">
+                          {hustle.length}
+                        </Badge>
+                      </div>
+                      <Button
+                        size="sm"
+                        className="bg-hustle text-white border-black font-black shadow-shadow"
+                        onClick={() => handleAdd("hustle")}
+                      >
+                        <Plus className="size-3.5" strokeWidth={2.5} /> Hustle
+                      </Button>
+                    </CardHeader>
+                    <CardContent className="space-y-3 flex-1 pt-4">
+                      {hustle.length === 0 ? (
+                        <div className="text-center py-8 border-2 border-dashed border-border bg-(--neo-gray-100)">
+                          <Inbox
+                            className="mx-auto size-8 text-foreground/40"
+                            strokeWidth={2}
+                          />
+                          <p className="mt-2 text-sm font-black">
+                            U don't have any Hustle today
+                          </p>
+                          <p className="mx-auto mt-1 max-w-65 text-xs leading-relaxed text-foreground/60">
+                            Let's add some Hustle: work, study, or side project
+                            to earn points and stay productive.
+                          </p>
+                          <Button
+                            size="sm"
+                            className="mt-4 bg-hustle text-white border-black font-black"
+                            onClick={() => handleAdd("hustle")}
+                          >
+                            <Plus className="size-3.5" strokeWidth={2.5} /> Add
+                            Hustle
+                          </Button>
+                        </div>
+                      ) : (
+                        hustle.map((t) => (
+                          <TaskCard
+                            key={t.id}
+                            task={t}
+                            onComplete={handleComplete}
+                            onEdit={handleEdit}
+                            onDelete={handleDelete}
+                            completingId={completingId}
+                          />
+                        ))
+                      )}
+                    </CardContent>
+                  </Card>
+                </CarouselItem>
 
-            <Card className="border-2 shadow-shadow bg-secondary-background flex flex-col">
-              <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2 border-b-2 border-border bg-white">
-                <div className="flex items-center gap-2">
-                  <div className="flex size-8 items-center justify-center border-2 border-border bg-humble">
-                    <BedDouble
-                      className="size-4 text-black"
-                      strokeWidth={2.5}
-                    />
-                  </div>
-                  <CardTitle className="text-humble text-lg">HUMBLE</CardTitle>
-                  <Badge className="bg-humble text-black border-black font-black">
-                    {humble.length}
-                  </Badge>
-                </div>
-                <Button
-                  size="sm"
-                  className="bg-humble text-black border-black font-black shadow-shadow"
-                  onClick={() => handleAdd("humble")}
-                >
-                  <Plus className="size-3.5" strokeWidth={2.5} /> Humble
-                </Button>
-              </CardHeader>
-              <CardContent className="space-y-3 flex-1">
-                {humble.length === 0 ? (
-                  <div className="text-center py-8 border-2 border-dashed border-border bg-(--neo-gray-100)">
-                    <Inbox
-                      className="mx-auto size-8 text-foreground/40"
-                      strokeWidth={2}
-                    />
-                    <p className="mt-2 text-sm font-black">
-                      U don't have any Humble today
-                    </p>
-                    <p className="mx-auto mt-1 max-w-65 text-xs leading-relaxed text-foreground/60">
-                      Add some rest time: sleep, take a walk, or do some
-                      journaling to stay balanced.
-                    </p>
-                    <Button
-                      size="sm"
-                      variant="neutral"
-                      className="mt-4 bg-white font-black"
-                      onClick={() => handleAdd("humble")}
-                    >
-                      <Plus className="size-3.5" strokeWidth={2.5} /> Add Humble
-                    </Button>
-                  </div>
-                ) : (
-                  humble.map((t) => (
-                    <TaskCard
-                      key={t.id}
-                      task={t}
-                      onComplete={handleComplete}
-                      onEdit={handleEdit}
-                      onDelete={handleDelete}
-                      completingId={completingId}
-                    />
-                  ))
-                )}
-              </CardContent>
-            </Card>
+                {/* HUMBLE CARD */}
+                <CarouselItem className="pl-4 basis-full md:basis-1/2">
+                  <Card className="h-full border-2 shadow-shadow bg-secondary-background flex flex-col">
+                    <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2 border-b-2 border-border bg-white">
+                      <div className="flex items-center gap-2">
+                        <div className="flex size-8 items-center justify-center border-2 border-border bg-humble">
+                          <BedDouble
+                            className="size-4 text-black"
+                            strokeWidth={2.5}
+                          />
+                        </div>
+                        <CardTitle className="text-humble text-lg">
+                          HUMBLE
+                        </CardTitle>
+                        <Badge className="bg-humble text-black border-black font-black">
+                          {humble.length}
+                        </Badge>
+                      </div>
+                      <Button
+                        size="sm"
+                        className="bg-humble text-black border-black font-black shadow-shadow"
+                        onClick={() => handleAdd("humble")}
+                      >
+                        <Plus className="size-3.5" strokeWidth={2.5} /> Humble
+                      </Button>
+                    </CardHeader>
+                    <CardContent className="space-y-3 flex-1 pt-4">
+                      {humble.length === 0 ? (
+                        <div className="text-center py-8 border-2 border-dashed border-border bg-(--neo-gray-100)">
+                          <Inbox
+                            className="mx-auto size-8 text-foreground/40"
+                            strokeWidth={2}
+                          />
+                          <p className="mt-2 text-sm font-black">
+                            U don't have any Humble today
+                          </p>
+                          <p className="mx-auto mt-1 max-w-65 text-xs leading-relaxed text-foreground/60">
+                            Add some rest time: sleep, take a walk, or do some
+                            journaling to stay balanced.
+                          </p>
+                          <Button
+                            size="sm"
+                            variant="neutral"
+                            className="mt-4 bg-white font-black"
+                            onClick={() => handleAdd("humble")}
+                          >
+                            <Plus className="size-3.5" strokeWidth={2.5} /> Add
+                            Humble
+                          </Button>
+                        </div>
+                      ) : (
+                        humble.map((t) => (
+                          <TaskCard
+                            key={t.id}
+                            task={t}
+                            onComplete={handleComplete}
+                            onEdit={handleEdit}
+                            onDelete={handleDelete}
+                            completingId={completingId}
+                          />
+                        ))
+                      )}
+                    </CardContent>
+                  </Card>
+                </CarouselItem>
+              </CarouselContent>
+              <CarouselPrevious className="hidden" />
+              <CarouselNext className="hidden" />
+            </Carousel>
+
+            {/* Mobile Swipe Hint */}
+            <div className="mt-2 flex justify-center md:hidden">
+              <p className="text-xs font-bold tracking-widest text-foreground/60">
+                ← Swipe to See Tasks →
+              </p>
+            </div>
           </div>
         )}
 
