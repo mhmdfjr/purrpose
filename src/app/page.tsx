@@ -487,7 +487,7 @@ function FinalCTA() {
                   <Button
                     asChild
                     size="lg"
-                    className="bg-black text-white border-black font-black hover:bg-black"
+                    className="bg-info text-white border-black font-black"
                   >
                     <Link href="/login">
                       Login / Register <ArrowRight className="size-4" />
@@ -504,14 +504,14 @@ function FinalCTA() {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div className="border-2 border-border bg-white p-3 shadow-shadow">
+                <div className="border-2 border-border bg-humble p-3 shadow-shadow">
                   <div className="text-xs font-black">TODAY</div>
                   <div className="mt-1 font-heading text-2xl font-black">
                     3 TASKS
                   </div>
                   <div className="text-xs">2 Hustles • 1 Humble</div>
                 </div>
-                <div className="border-2 border-border bg-black p-3 text-white shadow-shadow">
+                <div className="border-2 border-border bg-hustle p-3 text-white shadow-shadow">
                   <div className="text-xs font-black">STREAK</div>
                   <div className="mt-1 font-heading text-2xl font-black">
                     5 DAYS
@@ -523,8 +523,8 @@ function FinalCTA() {
                     <span>BALANCE</span>
                     <span>83/100</span>
                   </div>
-                  <div className="mt-2 h-3 border-2 border-border bg-white">
-                    <div className="h-full w-[83%] bg-[var(--color-humble)]" />
+                  <div className="mt-2 h-3 border-2 border-border bg-hustle">
+                    <div className="h-full w-[83%] bg-humble" />
                   </div>
                 </div>
               </div>

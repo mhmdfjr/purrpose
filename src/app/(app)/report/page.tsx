@@ -73,6 +73,7 @@ import {
   Trophy,
   RefreshCw,
   Inbox,
+  Medal,
 } from "lucide-react";
 
 type TaskDoc = {
@@ -314,896 +315,919 @@ export default function ReportPage() {
     );
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-heading font-black flex items-center gap-2">
-            <BarChart3 className="size-7" strokeWidth={2.5} /> Report
-          </h1>
-          <p className="text-sm text-foreground/60 font-bold">
-            Ringkasan informatif harian & mingguan dari tasks kamu.
-          </p>
-        </div>
-        <Badge
-          variant="neutral"
-          className="w-fit font-black border-2 bg-accent text-black"
-        >
-          <Sparkles className="size-3 mr-1" strokeWidth={2.5} />{" "}
-          {tab === "daily" ? "DAILY VIEW" : "WEEKLY VIEW"}
-        </Badge>
-      </div>
-
-      <Tabs value={tab} onValueChange={setTab} className="w-full">
-        <TabsList className="w-full sm:w-auto grid grid-cols-2 sm:inline-flex">
-          <TabsTrigger value="daily" className="gap-1.5">
-            <Clock3 className="size-4" strokeWidth={2.5} /> Daily
-          </TabsTrigger>
-          <TabsTrigger value="weekly" className="gap-1.5">
-            <Trophy className="size-4" strokeWidth={2.5} /> Weekly
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="daily" className="space-y-6 mt-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h2 className="text-xl font-heading font-black">Daily Report</h2>
-            <div className="flex items-center gap-2">
-              <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-                <PopoverTrigger asChild>
-                  <Button variant="neutral" className="font-bold gap-2">
-                    <CalendarIcon className="size-4" strokeWidth={2.5} />{" "}
-                    {format(selectedDateObj, "d MMM yyyy", {
-                      locale: localeId,
-                    })}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="p-0 border-0 bg-transparent shadow-none w-auto"
-                  align="end"
-                >
-                  <Calendar
-                    mode="single"
-                    selected={selectedDateObj}
-                    onSelect={(d) => {
-                      if (d) {
-                        const localIso = new Date(
-                          d.getTime() - d.getTimezoneOffset() * 60000,
-                        )
-                          .toISOString()
-                          .slice(0, 10);
-                        setSelectedDate(localIso);
-                        setCalendarOpen(false);
-                      }
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
-              <Button
-                variant="neutral"
-                className="font-bold"
-                onClick={() => setSelectedDate(todayStr())}
-              >
-                Hari ini
-              </Button>
-            </div>
+    <main className="flex-1 mx-auto w-full bg-white">
+      <div className="space-y-6 mx-auto w-full max-w-6xl p-4 md:p-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-heading font-black flex items-center gap-2">
+              <BarChart3 className="size-7" strokeWidth={2.5} /> Report
+            </h1>
+            <p className="text-sm text-foreground/60 font-bold">
+              Informative daily & weekly summary of ur tasks.
+            </p>
           </div>
+          <Badge
+            variant="neutral"
+            className="w-fit font-black border-2 bg-accent text-black"
+          >
+            <Sparkles className="size-3 mr-1" strokeWidth={2.5} />{" "}
+            {tab === "daily" ? "DAILY VIEW" : "WEEKLY VIEW"}
+          </Badge>
+        </div>
 
-          <p className="text-xs text-foreground/60 border-l-4 border-accent pl-3">
-            Saran dari sistem ini bisa kamu gunakan sebagai referensi, bukan
-            aturan baku. Hal-hal terkait medis atau psikologis sebaiknya
-            dikonsultasikan dengan profesional.
-          </p>
+        <Tabs value={tab} onValueChange={setTab} className="w-full">
+          <TabsList className="w-full sm:w-auto grid grid-cols-2 sm:inline-flex">
+            <TabsTrigger value="daily" className="gap-1.5">
+              <Clock3 className="size-4" strokeWidth={2.5} /> Daily
+            </TabsTrigger>
+            <TabsTrigger value="weekly" className="gap-1.5">
+              <Trophy className="size-4" strokeWidth={2.5} /> Weekly
+            </TabsTrigger>
+          </TabsList>
 
-          {error && (
-            <Alert variant="destructive">
-              <AlertTriangle className="size-4" strokeWidth={2.5} />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          {loading ? (
-            <div className="grid gap-4 md:grid-cols-3">
-              {[0, 1, 2].map((i) => (
-                <Skeleton key={i} className="h-32 border-2 border-border" />
-              ))}
-            </div>
-          ) : (
-            <>
-              {/* Summary cards */}
-              <div className="grid gap-4 md:grid-cols-3">
-                <Card className="border-2 shadow-shadow gap-0 bg-secondary-background">
-                  <CardHeader className="py-0">
-                    <CardTitle className="text-xs font-black tracking-widest flex items-center gap-1 text-hustle">
-                      <Briefcase className="size-3" strokeWidth={2.5} /> HUSTLE
-                      SCORE
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <p
-                      className="text-3xl font-black"
-                      style={{ color: "var(--color-hustle)" }}
-                    >
-                      {hustleScore.toFixed(1)}
-                    </p>
-                    <p className="text-xs font-bold text-foreground/60">
-                      {hustle.length} tasks •{" "}
-                      {hustle.filter((t) => t.status === "completed").length}{" "}
-                      completed
-                    </p>
-                    <Progress
-                      value={
-                        hustle.length
-                          ? (hustle.filter((t) => t.status === "completed")
-                              .length /
-                              hustle.length) *
-                            100
-                          : 0
-                      }
-                      className="h-2 [&>div]:bg-hustle"
+          <TabsContent value="daily" className="space-y-6 mt-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <h2 className="text-xl font-heading font-black">Daily Report</h2>
+              <div className="flex items-center gap-2">
+                <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                  <PopoverTrigger asChild>
+                    <Button className="font-bold bg-accent gap-2">
+                      <CalendarIcon className="size-4" strokeWidth={2.5} />{" "}
+                      {format(selectedDateObj, "d MMM yyyy", {
+                        locale: localeId,
+                      })}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="p-0 border-0 bg-transparent shadow-none w-auto"
+                    align="end"
+                  >
+                    <Calendar
+                      mode="single"
+                      selected={selectedDateObj}
+                      onSelect={(d) => {
+                        if (d) {
+                          const localIso = new Date(
+                            d.getTime() - d.getTimezoneOffset() * 60000,
+                          )
+                            .toISOString()
+                            .slice(0, 10);
+                          setSelectedDate(localIso);
+                          setCalendarOpen(false);
+                        }
+                      }}
                     />
-                  </CardContent>
-                </Card>
-                <Card className="border-2 shadow-shadow gap-0 bg-secondary-background">
-                  <CardHeader className="py-0">
-                    <CardTitle className="text-xs font-black tracking-widest flex items-center gap-1 text-humble">
-                      <BedDouble className="size-3" strokeWidth={2.5} /> HUMBLE
-                      SCORE
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <p
-                      className="text-3xl font-black"
-                      style={{ color: "var(--color-humble)" }}
-                    >
-                      {humbleScore.toFixed(1)}
-                    </p>
-                    <p className="text-xs font-bold text-foreground/60">
-                      {humble.length} tasks •{" "}
-                      {humble.filter((t) => t.status === "completed").length}{" "}
-                      completed
-                    </p>
-                    <Progress
-                      value={
-                        humble.length
-                          ? (humble.filter((t) => t.status === "completed")
-                              .length /
-                              humble.length) *
-                            100
-                          : 0
-                      }
-                      className="h-2 [&>div]:bg-humble"
-                    />
-                  </CardContent>
-                </Card>
-                <Card className="border-2 shadow-shadow gap-0 bg-accent">
-                  <CardHeader className="py-0">
-                    <CardTitle className="text-xs font-black tracking-widest flex items-center gap-1">
-                      <CheckCircle2 className="size-3" strokeWidth={2.5} />{" "}
-                      STATUS
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <p className="text-sm font-black">
-                      Pending: {pendingCount} • Selesai: {completedCount} •
-                      Missed: {missedCount}
-                    </p>
-                    <Progress
-                      value={completionRate * 100}
-                      className="h-2 [&>div]:bg-black"
-                    />
-                    <p className="text-xs font-bold">
-                      Completion {(completionRate * 100).toFixed(0)}% • Missed
-                      auto cutover midnight
-                    </p>
-                  </CardContent>
-                </Card>
+                  </PopoverContent>
+                </Popover>
+                <Button
+                  variant="neutral"
+                  className="font-bold bg-accent"
+                  onClick={() => setSelectedDate(todayStr())}
+                >
+                  Today
+                </Button>
               </div>
+            </div>
 
-              {/* Charts row */}
-              <div className="grid gap-4 lg:grid-cols-3">
-                <Card className="border-2 shadow-shadow bg-secondary-background gap-0 lg:col-span-2">
-                  <CardHeader className="">
-                    <CardTitle className="text-sm font-black flex items-center gap-2">
-                      <BarChart3 className="size-4" strokeWidth={2.5} /> Skor
-                      per Task (Top 8)
-                    </CardTitle>
-                    <CardDescription className="font-bold text-xs">
-                      1 bar per task • warna berbeda • tooltip kategori
-                      hustle/humble
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="">
-                    {dailyBarData.length === 0 ? (
-                      <div className="text-center py-2 border-2 border-dashed border-border bg-(--neo-gray-100) font-bold text-sm">
-                        Belum ada data untuk chart
-                      </div>
-                    ) : (
-                      <ChartContainer
-                        config={dailyBarConfig}
-                        className="max-h-65 w-full p-0 m-0"
-                      >
-                        <BarChart accessibilityLayer data={dailyBarData}>
-                          <CartesianGrid
-                            vertical={false}
-                            stroke="var(--border)"
-                          />
-                          <XAxis
-                            dataKey="task"
-                            tickLine={false}
-                            tickMargin={10}
-                            axisLine={false}
-                            tick={{ fontSize: 11, fontWeight: 700 }}
-                            interval={0}
-                            textAnchor="end"
-                            height={30}
-                          />
-                          <YAxis tick={{ fontSize: 11 }} />
-                          <ChartTooltip
-                            cursor={false}
-                            content={
-                              <ChartTooltipContent
-                                hideLabel
-                                formatter={(value, _name, item) => {
-                                  const p = (
-                                    item as unknown as {
-                                      payload?: {
-                                        category?: string;
-                                        fullTitle?: string;
-                                      };
-                                    }
-                                  )?.payload;
-                                  const cat =
-                                    p?.category === "hustle"
-                                      ? "Hustle"
-                                      : p?.category === "humble"
-                                        ? "Humble"
-                                        : "";
-                                  const title = p?.fullTitle || "";
-                                  return (
-                                    <div className="flex flex-col gap-1">
-                                      <span className="font-black">
-                                        {title}
-                                      </span>
-                                      <span className="font-bold">
-                                        {cat} • Skor {value}
-                                      </span>
-                                    </div>
-                                  ) as unknown as string;
-                                }}
-                              />
-                            }
-                          />
-                          <Bar
-                            dataKey="score"
-                            strokeWidth={2}
-                            radius={0}
-                            activeIndex={2}
-                            activeBar={({ ...props }) => {
-                              const fill =
-                                (
-                                  props as unknown as {
-                                    payload?: { fill?: string };
-                                  }
-                                )?.payload?.fill ||
-                                (props as unknown as { fill?: string }).fill;
-                              return (
-                                <Rectangle
-                                  {...(props as unknown as Record<
-                                    string,
-                                    unknown
-                                  >)}
-                                  fillOpacity={1.0}
-                                  stroke={fill as string}
-                                  fill={fill as string}
-                                  className="stroke-2"
+            <p className="text-xs text-foreground border-l-4 border-accent pl-3">
+              AI & rule based suggestions from this system can be used as a
+              reference, not a strict rule. Medical or psychological matters
+              should be discussed with a professional.
+            </p>
+
+            {error && (
+              <Alert variant="destructive">
+                <AlertTriangle className="size-4" strokeWidth={2.5} />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            {loading ? (
+              <div className="grid gap-4 md:grid-cols-3">
+                {[0, 1, 2].map((i) => (
+                  <Skeleton key={i} className="h-32 border-2 border-border" />
+                ))}
+              </div>
+            ) : (
+              <>
+                {/* Summary cards */}
+                <div className="grid gap-4 md:grid-cols-3">
+                  <Card className="border-2 shadow-shadow gap-0 bg-hustle">
+                    <CardHeader className="py-0">
+                      <CardTitle className="text-xs text-white font-black tracking-widest flex items-center gap-1">
+                        <Briefcase className="size-3" strokeWidth={2.5} />{" "}
+                        HUSTLE SCORE
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <p className="text-3xl font-black text-white">
+                        {hustleScore.toFixed(1)}
+                      </p>
+                      <p className="text-xs font-bold text-white">
+                        {hustle.length} tasks •{" "}
+                        {hustle.filter((t) => t.status === "completed").length}{" "}
+                        completed
+                      </p>
+                      <Progress
+                        value={
+                          hustle.length
+                            ? (hustle.filter((t) => t.status === "completed")
+                                .length /
+                                hustle.length) *
+                              100
+                            : 0
+                        }
+                        className=" h-2 [&>div]:bg-black bg-hustle"
+                      />
+                    </CardContent>
+                  </Card>
+                  <Card className="border-2 shadow-shadow gap-0 bg-humble">
+                    <CardHeader className="py-0">
+                      <CardTitle className="text-xs font-black tracking-widest flex items-center gap-1 text-black">
+                        <BedDouble className="size-3" strokeWidth={2.5} />{" "}
+                        HUMBLE SCORE
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <p className="text-3xl font-black text-black">
+                        {humbleScore.toFixed(1)}
+                      </p>
+                      <p className="text-xs font-bold text-black">
+                        {humble.length} tasks •{" "}
+                        {humble.filter((t) => t.status === "completed").length}{" "}
+                        completed
+                      </p>
+                      <Progress
+                        value={
+                          humble.length
+                            ? (humble.filter((t) => t.status === "completed")
+                                .length /
+                                humble.length) *
+                              100
+                            : 0
+                        }
+                        className="h-2 [&>div]:bg-black bg-humble"
+                      />
+                    </CardContent>
+                  </Card>
+                  <Card className="border-2 shadow-shadow gap-0 bg-info">
+                    <CardHeader className="py-0">
+                      <CardTitle className="text-xs font-black tracking-widest flex items-center gap-1">
+                        <CheckCircle2 className="size-3" strokeWidth={2.5} />{" "}
+                        STATUS
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <p className="text-sm font-black">
+                        Pending: {pendingCount} • Completed: {completedCount} •
+                        Missed: {missedCount}
+                      </p>
+                      <Progress
+                        value={completionRate * 100}
+                        className="h-2 [&>div]:bg-black bg-info"
+                      />
+                      <p className="text-xs font-bold">
+                        Completion {(completionRate * 100).toFixed(0)}% • Missed
+                        auto cutover midnight
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Charts row */}
+                <div className="grid gap-4 lg:grid-cols-3">
+                  <Card className="border-2 shadow-shadow bg-background gap-0 lg:col-span-2">
+                    <CardHeader className="">
+                      <CardTitle className="text-sm font-black flex items-center gap-2">
+                        <BarChart3 className="size-4" strokeWidth={2.5} /> Score
+                        per Task (Top 8)
+                      </CardTitle>
+                      <CardDescription className="font-bold text-xs">
+                        List of top scored tasks, color-coded. Hover for
+                        details.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="">
+                      {dailyBarData.length === 0 ? (
+                        <div className="text-center py-2 border-2 border-dashed border-border bg-(--neo-gray-100) font-bold text-sm">
+                          U don't have data for chart yet. Add Hustle/Humble
+                          tasks and mark them completed to see the chart.
+                        </div>
+                      ) : (
+                        <ChartContainer
+                          config={dailyBarConfig}
+                          className="max-h-65 w-full p-0 m-0"
+                        >
+                          <BarChart accessibilityLayer data={dailyBarData}>
+                            <CartesianGrid
+                              vertical={false}
+                              stroke="var(--border)"
+                            />
+                            <XAxis
+                              dataKey="task"
+                              tickLine={false}
+                              tickMargin={10}
+                              axisLine={false}
+                              tick={{ fontSize: 11, fontWeight: 700 }}
+                              interval={0}
+                              textAnchor="end"
+                              height={30}
+                            />
+                            <YAxis tick={{ fontSize: 11 }} />
+                            <ChartTooltip
+                              cursor={false}
+                              content={
+                                <ChartTooltipContent
+                                  hideLabel
+                                  className="bg-white"
+                                  formatter={(value, _name, item) => {
+                                    const p = (
+                                      item as unknown as {
+                                        payload?: {
+                                          category?: string;
+                                          fullTitle?: string;
+                                        };
+                                      }
+                                    )?.payload;
+                                    const cat =
+                                      p?.category === "hustle"
+                                        ? "Hustle"
+                                        : p?.category === "humble"
+                                          ? "Humble"
+                                          : "";
+                                    const title = p?.fullTitle || "";
+                                    return (
+                                      <div className="flex flex-col gap-1 bg-white">
+                                        <span className="font-black">
+                                          {title}
+                                        </span>
+                                        <span className="font-bold">
+                                          {cat} • Score {value}
+                                        </span>
+                                      </div>
+                                    ) as unknown as string;
+                                  }}
                                 />
-                              );
-                            }}
-                          >
-                            {dailyBarData.map((entry, index) => (
-                              <Cell
-                                key={`cell-${index}`}
-                                fill={entry.fill}
-                                stroke="var(--border)"
-                                strokeWidth={2}
-                              />
-                            ))}
-                          </Bar>
-                        </BarChart>
-                      </ChartContainer>
-                    )}
-                  </CardContent>
-                  <CardFooter className="flex-col items-start gap-2 text-sm py-0">
-                    <div className="flex gap-2 leading-none font-black">
-                      Top 8 task hari ini{" "}
-                      <TrendingUp className="size-4" strokeWidth={2.5} />
-                    </div>
-                    <div className="text-muted-foreground leading-none font-bold text-xs">
-                      Skor = level × durasi • warna berbeda per bar • cek
-                      tooltip untuk hustle/humble
-                    </div>
-                  </CardFooter>
-                </Card>
-
-                <Card className="flex flex-col border-2 shadow-shadow gap-0 bg-secondary-background">
-                  <CardHeader className="items-center py-0 ">
-                    <CardTitle className="text-sm font-black flex items-center gap-2">
-                      <PieIcon className="size-4" strokeWidth={2.5} />{" "}
-                      Distribusi Skor
-                    </CardTitle>
-                    <CardDescription className="font-bold text-xs">
-                      Hustle rose • Humble green • Pending gray
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="">
-                    {pieData.length === 0 ? (
-                      <div className="text-center py-4 border-2 border-dashed border-border bg-(--neo-gray-100) font-bold text-sm">
-                        Belum ada skor
+                              }
+                            />
+                            <Bar
+                              dataKey="score"
+                              strokeWidth={2}
+                              radius={0}
+                              activeIndex={2}
+                              activeBar={({ ...props }) => {
+                                const fill =
+                                  (
+                                    props as unknown as {
+                                      payload?: { fill?: string };
+                                    }
+                                  )?.payload?.fill ||
+                                  (props as unknown as { fill?: string }).fill;
+                                return (
+                                  <Rectangle
+                                    {...(props as unknown as Record<
+                                      string,
+                                      unknown
+                                    >)}
+                                    fillOpacity={1.0}
+                                    stroke={fill as string}
+                                    fill={fill as string}
+                                    className="stroke-2"
+                                  />
+                                );
+                              }}
+                            >
+                              {dailyBarData.map((entry, index) => (
+                                <Cell
+                                  key={`cell-${index}`}
+                                  fill={entry.fill}
+                                  stroke="var(--border)"
+                                  strokeWidth={2}
+                                />
+                              ))}
+                            </Bar>
+                          </BarChart>
+                        </ChartContainer>
+                      )}
+                    </CardContent>
+                    <CardFooter className="flex-col items-start gap-2 text-sm py-0">
+                      <div className="flex gap-2 leading-none font-black">
+                        Top 8 task for today{" "}
+                        <TrendingUp className="size-4" strokeWidth={2.5} />
                       </div>
-                    ) : (
-                      <ChartContainer
-                        config={pieConfig}
-                        className="max-h-65 w-full aspect-square  p-0 m-0"
-                      >
-                        <PieChart>
-                          <ChartTooltip
-                            cursor={false}
-                            content={<ChartTooltipContent hideLabel />}
-                          />
-                          <Pie
-                            data={pieData}
-                            dataKey="value"
-                            nameKey="name"
-                            innerRadius={60}
-                            strokeWidth={2}
-                            stroke="var(--border)"
-                          >
-                            {pieData.map((entry, idx) => (
-                              <Cell key={idx} fill={entry.fill} />
-                            ))}
-                            <RechartsLabel
-                              content={({ viewBox }) => {
-                                if (
-                                  viewBox &&
-                                  "cx" in viewBox &&
-                                  "cy" in viewBox
-                                ) {
-                                  const total = pieData.reduce(
-                                    (acc, curr) => acc + curr.value,
-                                    0,
-                                  );
-                                  return (
-                                    <text
-                                      x={viewBox.cx}
-                                      y={viewBox.cy}
-                                      textAnchor="middle"
-                                      dominantBaseline="middle"
-                                    >
-                                      <tspan
+                      <div className="text-muted-foreground leading-none font-bold text-xs">
+                        Score = level × duration • different colors per bar •
+                        check tooltip for hustle/humble
+                      </div>
+                    </CardFooter>
+                  </Card>
+
+                  <Card className="flex flex-col border-2 shadow-shadow gap-0 bg-background">
+                    <CardHeader className="items-center py-0 ">
+                      <CardTitle className="text-sm font-black flex items-center gap-2">
+                        <PieIcon className="size-4" strokeWidth={2.5} /> Score
+                        Distribution
+                      </CardTitle>
+                      <CardDescription className="font-bold text-xs">
+                        Hustle rose • Humble green • Pending gray
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="">
+                      {pieData.length === 0 ? (
+                        <div className="text-center py-4 border-2 border-dashed border-border bg-(--neo-gray-100) font-bold text-sm">
+                          No scores available. Complete Hustle/Humble tasks to
+                          see the distribution chart.
+                        </div>
+                      ) : (
+                        <ChartContainer
+                          config={pieConfig}
+                          className="max-h-65 w-full aspect-square  p-0 m-0"
+                        >
+                          <PieChart>
+                            <ChartTooltip
+                              cursor={false}
+                              content={
+                                <ChartTooltipContent
+                                  hideLabel
+                                  className="bg-white"
+                                />
+                              }
+                            />
+                            <Pie
+                              data={pieData}
+                              dataKey="value"
+                              nameKey="name"
+                              innerRadius={60}
+                              strokeWidth={2}
+                              stroke="var(--border)"
+                            >
+                              {pieData.map((entry, idx) => (
+                                <Cell key={idx} fill={entry.fill} />
+                              ))}
+                              <RechartsLabel
+                                content={({ viewBox }) => {
+                                  if (
+                                    viewBox &&
+                                    "cx" in viewBox &&
+                                    "cy" in viewBox
+                                  ) {
+                                    const total = pieData.reduce(
+                                      (acc, curr) => acc + curr.value,
+                                      0,
+                                    );
+                                    return (
+                                      <text
                                         x={viewBox.cx}
                                         y={viewBox.cy}
-                                        className="fill-foreground text-3xl font-black"
+                                        textAnchor="middle"
+                                        dominantBaseline="middle"
                                       >
-                                        {total.toFixed(1)}
-                                      </tspan>
-                                      <tspan
-                                        x={viewBox.cx}
-                                        y={(viewBox.cy || 0) + 20}
-                                        className="fill-foreground text-xs font-bold"
-                                      >
-                                        Total Skor
-                                      </tspan>
-                                    </text>
-                                  );
-                                }
-                              }}
-                            />
-                          </Pie>
-                        </PieChart>
-                      </ChartContainer>
-                    )}
-                  </CardContent>
-                  <CardFooter className="flex-col gap-2 text-sm py-0 ">
-                    <div className="flex items-center gap-2 leading-none font-black">
-                      Hustle {hustleScore.toFixed(1)} vs Humble{" "}
-                      {humbleScore.toFixed(1)}{" "}
-                      <TrendingUp className="size-4" strokeWidth={2.5} />
-                    </div>
-                    <div className="text-muted-foreground leading-none font-bold text-xs">
-                      {completedCount} selesai • {pendingCount} pending{" "}
-                      {missedCount > 0 ? `• ${missedCount} missed` : ""}
-                    </div>
-                  </CardFooter>
-                </Card>
-              </div>
-
-              <Card className="border-2 shadow-shadow bg-secondary-background gap-0">
-                <CardHeader className="">
-                  <CardTitle className="text-sm font-black flex items-center gap-2">
-                    <TrendingUp className="size-4" strokeWidth={2.5} />{" "}
-                    Distribusi Level (1-5)
-                  </CardTitle>
-                  <CardDescription className="font-bold text-xs">
-                    Hustle rose • Humble green
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="">
-                  <ChartContainer
-                    config={levelConfig}
-                    className="h-[220px] w-full"
-                  >
-                    <AreaChart
-                      accessibilityLayer
-                      data={levelData}
-                      margin={{ left: 12, right: 12 }}
-                    >
-                      <CartesianGrid
-                        vertical={false}
-                        stroke="var(--border)"
-                        strokeDasharray="3 3"
-                      />
-                      <XAxis
-                        dataKey="level"
-                        tickLine={false}
-                        axisLine={false}
-                        tickMargin={8}
-                        tick={{ fontSize: 12, fontWeight: 700 }}
-                      />
-                      <YAxis
-                        tickLine={false}
-                        axisLine={false}
-                        allowDecimals={false}
-                        tick={{ fontSize: 12 }}
-                      />
-                      <ChartTooltip
-                        cursor={false}
-                        content={<ChartTooltipContent indicator="line" />}
-                      />
-                      <Area
-                        dataKey="humble"
-                        type="natural"
-                        fill="var(--color-humble)"
-                        stroke="var(--color-humble)"
-                        stackId="a"
-                        strokeWidth={2}
-                        fillOpacity={0.9}
-                        activeDot={{
-                          fill: "var(--chart-active-dot)",
-                          stroke: "var(--border)",
-                          strokeWidth: 2,
-                        }}
-                      />
-                      <Area
-                        dataKey="hustle"
-                        type="natural"
-                        fill="var(--color-hustle)"
-                        stroke="var(--color-hustle)"
-                        stackId="a"
-                        strokeWidth={2}
-                        fillOpacity={0.9}
-                        activeDot={{
-                          fill: "var(--chart-active-dot)",
-                          stroke: "var(--border)",
-                          strokeWidth: 2,
-                        }}
-                      />
-                      <ChartLegend content={<ChartLegendContent />} />
-                    </AreaChart>
-                  </ChartContainer>
-                </CardContent>
-              </Card>
-
-              <div className="grid gap-6 md:grid-cols-2">
-                <Card className="border-2 pt-0 shadow-shadow bg-secondary-background">
-                  <CardHeader className="border-b-2 border-border py-2 flex flex-row items-center justify-between">
-                    <CardTitle className="text-white bg-hustle flex items-center gap-2 p-2 border-2 border-black">
-                      <Briefcase className="size-4" strokeWidth={2.5} /> HUSTLE
-                    </CardTitle>
-                    <Badge className="bg-hustle text-white border-black font-black">
-                      {hustle.length}
-                    </Badge>
-                  </CardHeader>
-                  <CardContent>{renderList(hustle)}</CardContent>
-                </Card>
-                <Card className="border-2 pt-0 shadow-shadow bg-secondary-background">
-                  <CardHeader className="border-b-2 border-border py-2 flex flex-row items-center justify-between">
-                    <CardTitle className="text-black bg-humble flex items-center gap-2 p-2 border-2 border-black">
-                      <BedDouble className="size-4" strokeWidth={2.5} /> HUMBLE
-                    </CardTitle>
-                    <Badge className="bg-humble text-black border-black font-black">
-                      {humble.length}
-                    </Badge>
-                  </CardHeader>
-                  <CardContent>{renderList(humble)}</CardContent>
-                </Card>
-              </div>
-            </>
-          )}
-        </TabsContent>
-
-        <TabsContent value="weekly" className="space-y-6 mt-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <h2 className="text-xl font-heading font-black">Weekly Report</h2>
-            <div className="flex items-center gap-2">
-              <Input
-                id="weekId"
-                value={weekIdInput}
-                onChange={(e) => setWeekIdInput(e.target.value)}
-                placeholder="2026-W36"
-                className="w-36 bg-white border-2 font-bold shadow-shadow"
-              />
-              <Button
-                variant="neutral"
-                className="bg-white font-black"
-                onClick={() => void loadWeekly()}
-              >
-                <RefreshCw className="size-3.5 mr-1" strokeWidth={2.5} /> Load
-              </Button>
-            </div>
-          </div>
-
-          {weeklyLoading ? (
-            <div className="grid gap-4 md:grid-cols-3">
-              {[0, 1, 2].map((i) => (
-                <Skeleton key={i} className="h-32 border-2 border-border" />
-              ))}
-            </div>
-          ) : !weekly ? (
-            <Card className="border-2 border-dashed shadow-shadow">
-              <CardContent className="pt-6 text-center">
-                <Inbox
-                  className="mx-auto size-8 text-foreground"
-                  strokeWidth={2}
-                />
-                <p className="text-sm font-black mt-2">
-                  Belum ada laporan untuk {weekIdInput}
-                </p>
-                <p className="text-xs font-bold text-foreground/60 mt-1 max-w-xl mx-auto">
-                  Laporan mingguan dibuat otomatis tiap Senin 00:00 UTC. Jika
-                  minggu ini masih berjalan, cek kembali setelah Senin atau coba
-                  minggu sebelumnya. Insight di sini bukan penilaian, hanya
-                  refleksi.
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            <>
-              <div className="grid gap-4 md:grid-cols-3">
-                <Card className="border-2 shadow-shadow bg-secondary-background">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-xs font-black tracking-widest flex items-center gap-1">
-                      <BarChart3 className="size-3" strokeWidth={2.5} /> BALANCE
-                      INDEX
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-4xl font-black">
-                      {weekly.balanceIndex.toFixed(0)}
-                      <span className="text-sm font-bold">/100</span>
-                    </p>
-                    <div
-                      className="mt-3 h-4 w-full border-2 border-border relative overflow-hidden"
-                      style={{
-                        background:
-                          "linear-gradient(90deg, var(--color-hustle) 0%, var(--color-humble) 100%)",
-                      }}
-                    >
-                      <div
-                        className="absolute top-0 bottom-0 w-1.5 bg-black border border-white shadow-sm"
-                        style={{ left: `calc(${weekly.balanceIndex}% - 3px)` }}
-                      />
-                    </div>
-                    <p className="text-xs font-bold text-foreground/60 mt-2">
-                      {weekly.startDate} → {weekly.endDate} • Ideal 50:50
-                      (humble{" "}
-                      {(
-                        (weekly.humbleScore / (weekly.totalScore || 1)) *
-                        100
-                      ).toFixed(0)}
-                      %)
-                    </p>
-                    <Progress
-                      value={weekly.balanceIndex}
-                      className="mt-2 h-2 [&>div]:bg-black"
-                    />
-                  </CardContent>
-                </Card>
-                <Card className="border-2 shadow-shadow bg-secondary-background">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-xs font-black tracking-widest">
-                      SCORES
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex gap-4">
-                      <div className="border-2 border-border bg-hustle text-white px-3 py-2 text-center shadow-sm">
-                        <p className="text-xl font-black">
-                          {weekly.hustleScore.toFixed(1)}
-                        </p>
-                        <p className="text-xs font-black">Hustle</p>
+                                        <tspan
+                                          x={viewBox.cx}
+                                          y={viewBox.cy}
+                                          className="fill-foreground text-3xl font-black"
+                                        >
+                                          {total.toFixed(1)}
+                                        </tspan>
+                                        <tspan
+                                          x={viewBox.cx}
+                                          y={(viewBox.cy || 0) + 20}
+                                          className="fill-foreground text-xs font-bold"
+                                        >
+                                          Total Skor
+                                        </tspan>
+                                      </text>
+                                    );
+                                  }
+                                }}
+                              />
+                            </Pie>
+                          </PieChart>
+                        </ChartContainer>
+                      )}
+                    </CardContent>
+                    <CardFooter className="flex-col gap-2 text-sm py-0 ">
+                      <div className="flex items-center gap-2 leading-none font-black">
+                        Hustle {hustleScore.toFixed(1)} vs Humble{" "}
+                        {humbleScore.toFixed(1)}{" "}
+                        <TrendingUp className="size-4" strokeWidth={2.5} />
                       </div>
-                      <div className="border-2 border-border bg-humble text-black px-3 py-2 text-center shadow-sm">
-                        <p className="text-xl font-black">
-                          {weekly.humbleScore.toFixed(1)}
-                        </p>
-                        <p className="text-xs font-black">Humble</p>
+                      <div className="text-muted-foreground leading-none font-bold text-xs">
+                        {completedCount} completed • {pendingCount} pending{" "}
+                        {missedCount > 0 ? `• ${missedCount} missed` : ""}
                       </div>
-                      <div className="border-2 border-border bg-accent text-black px-3 py-2 text-center shadow-sm">
-                        <p className="text-xl font-black">
-                          {weekly.totalScore.toFixed(1)}
-                        </p>
-                        <p className="text-xs font-black">Total</p>
-                      </div>
-                    </div>
-                    <p className="text-xs font-bold text-foreground/60 mt-3">
-                      Completed {weekly.completedTasksCount} • Missed{" "}
-                      {weekly.missedTasksCount} • Rate{" "}
-                      {(weekly.completionRate * 100).toFixed(0)}%
-                    </p>
-                    <Progress
-                      value={weekly.completionRate * 100}
-                      className="mt-1 h-2 [&>div]:bg-info"
-                    />
-                  </CardContent>
-                </Card>
-                <Card className="border-2 shadow-shadow bg-white">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-xs font-black tracking-widest">
-                      META
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm font-black border-2 border-border bg-accent px-2 py-1 inline-block shadow-sm">
-                      {weekly.weekId}
-                    </p>
-                    <p className="text-xs font-bold text-foreground/60 mt-2">
-                      {weekly.startDate} to {weekly.endDate} (Mon-Sun UTC)
-                    </p>
-                    <div className="mt-3 flex gap-2 text-xs font-black">
-                      <span className="border-2 border-border bg-(--neo-gray-100) px-2 py-1">
-                        {weekly.completedTasksCount} done
-                      </span>
-                      <span className="border-2 border-border bg-black text-white px-2 py-1">
-                        {weekly.missedTasksCount} missed
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+                    </CardFooter>
+                  </Card>
+                </div>
 
-              {/* Weekly charts */}
-              <div className="grid gap-4 lg:grid-cols-2">
-                <Card className="border-2 shadow-shadow bg-secondary-background">
-                  <CardHeader>
+                <Card className="border-2 shadow-shadow bg-secondary-background gap-0">
+                  <CardHeader className="">
                     <CardTitle className="text-sm font-black flex items-center gap-2">
-                      <BarChart3 className="size-4" strokeWidth={2.5} /> Hustle
-                      vs Humble (minggu ini)
+                      <TrendingUp className="size-4" strokeWidth={2.5} />{" "}
+                      Distribution Level (1-5)
                     </CardTitle>
+                    <CardDescription className="font-bold text-xs">
+                      Hustle (Pressure Level) • Humble (Relaxation Level)
+                    </CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="">
                     <ChartContainer
-                      config={{
-                        hustle: {
-                          label: "Hustle",
-                          color: "#FF0052",
-                        },
-                        humble: {
-                          label: "Humble",
-                          color: "#00C68D",
-                        },
-                      }}
-                      className="h-65 w-full"
+                      config={levelConfig}
+                      className="h-[220px] w-full"
                     >
-                      <BarChart
-                        data={[
-                          {
-                            name: weekly.weekId,
-                            hustle: weekly.hustleScore,
-                            humble: weekly.humbleScore,
-                          },
-                        ]}
+                      <AreaChart
+                        accessibilityLayer
+                        data={levelData}
+                        margin={{ left: 12, right: 12 }}
                       >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="name" tick={{ fontWeight: 700 }} />
-                        <YAxis />
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                        <Bar
-                          dataKey="hustle"
-                          fill="var(--color-hustle)"
+                        <CartesianGrid
+                          vertical={false}
                           stroke="var(--border)"
-                          strokeWidth={2}
+                          strokeDasharray="3 3"
                         />
-                        <Bar
+                        <XAxis
+                          dataKey="level"
+                          tickLine={false}
+                          axisLine={false}
+                          tickMargin={8}
+                          tick={{ fontSize: 12, fontWeight: 700 }}
+                        />
+                        <YAxis
+                          tickLine={false}
+                          axisLine={false}
+                          allowDecimals={false}
+                          tick={{ fontSize: 12 }}
+                        />
+                        <ChartTooltip
+                          cursor={false}
+                          content={<ChartTooltipContent indicator="line" />}
+                        />
+                        <Area
                           dataKey="humble"
+                          type="natural"
                           fill="var(--color-humble)"
-                          stroke="var(--border)"
+                          stroke="var(--color-humble)"
+                          stackId="a"
                           strokeWidth={2}
-                        />
-                      </BarChart>
-                    </ChartContainer>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-2 shadow-shadow bg-secondary-background">
-                  <CardHeader>
-                    <CardTitle className="text-sm font-black flex items-center gap-2">
-                      <PieIcon className="size-4" strokeWidth={2.5} /> Komposisi
-                      Skor
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ChartContainer
-                      config={{
-                        hustle: {
-                          label: "Hustle",
-                          color: "#FF0052",
-                        },
-                        humble: {
-                          label: "Humble",
-                          color: "#00C68D",
-                        },
-                      }}
-                      className="h-65 w-full"
-                    >
-                      <PieChart>
-                        <Pie
-                          data={[
-                            {
-                              name: "Hustle",
-                              value: weekly.hustleScore,
-                              fill: "#FF0052",
-                            },
-                            {
-                              name: "Humble",
-                              value: weekly.humbleScore,
-                              fill: "#00C68D",
-                            },
-                          ]}
-                          dataKey="value"
-                          nameKey="name"
-                          innerRadius={60}
-                          outerRadius={90}
-                          stroke="var(--border)"
-                          strokeWidth={2}
-                          label={({ name, percent }) => {
-                            const pct =
-                              typeof percent === "number" ? percent : 0;
-                            return `${name} ${(pct * 100).toFixed(0)}%`;
+                          fillOpacity={0.9}
+                          activeDot={{
+                            fill: "var(--chart-active-dot)",
+                            stroke: "var(--border)",
+                            strokeWidth: 2,
                           }}
                         />
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                      </PieChart>
-                    </ChartContainer>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {weeklyHistory.length > 1 && (
-                <Card className="border-2 shadow-shadow bg-secondary-background">
-                  <CardHeader>
-                    <CardTitle className="text-sm font-black flex items-center gap-2">
-                      <TrendingUp className="size-4" strokeWidth={2.5} /> Tren 4
-                      Minggu - Balance & Skor
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ChartContainer
-                      config={weeklyTrendConfig}
-                      className="h-65 w-full"
-                    >
-                      <AreaChart data={weeklyTrendData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="week" tick={{ fontWeight: 700 }} />
-                        <YAxis />
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                        <ChartLegend
-                          content={<ChartLegendContent payload={undefined} />}
-                        />
                         <Area
-                          type="monotone"
                           dataKey="hustle"
-                          stackId="a"
-                          stroke="var(--color-hustle)"
+                          type="natural"
                           fill="var(--color-hustle)"
-                          strokeWidth={2}
-                        />
-                        <Area
-                          type="monotone"
-                          dataKey="humble"
+                          stroke="var(--color-hustle)"
                           stackId="a"
-                          stroke="var(--color-humble)"
-                          fill="var(--color-humble)"
                           strokeWidth={2}
+                          fillOpacity={0.9}
+                          activeDot={{
+                            fill: "var(--chart-active-dot)",
+                            stroke: "var(--border)",
+                            strokeWidth: 2,
+                          }}
                         />
+                        <ChartLegend content={<ChartLegendContent />} />
                       </AreaChart>
                     </ChartContainer>
                   </CardContent>
                 </Card>
-              )}
 
-              <Card className="border-accent border-2 bg-(--neo-white) shadow-shadow">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2 font-black">
-                    Saran Mingguan
-                    {weekly.aiSuggestion && (
-                      <Badge className="bg-accent text-black border-black font-black text-xs gap-1">
-                        <Sparkles className="size-3" strokeWidth={2.5} /> AI
-                        Enhanced
+                <div className="grid gap-6 md:grid-cols-2">
+                  <Card className="border-2 pt-0 shadow-shadow bg-secondary-background">
+                    <CardHeader className="border-b-2 border-border py-2 flex flex-row items-center justify-between">
+                      <CardTitle className="text-white bg-hustle flex items-center gap-2 p-2 border-2 border-black">
+                        <Briefcase className="size-4" strokeWidth={2.5} />{" "}
+                        HUSTLE
+                      </CardTitle>
+                      <Badge className="bg-hustle text-white border-black font-black">
+                        {hustle.length}
                       </Badge>
-                    )}
+                    </CardHeader>
+                    <CardContent>{renderList(hustle)}</CardContent>
+                  </Card>
+                  <Card className="border-2 pt-0 shadow-shadow bg-secondary-background">
+                    <CardHeader className="border-b-2 border-border py-2 flex flex-row items-center justify-between">
+                      <CardTitle className="text-black bg-humble flex items-center gap-2 p-2 border-2 border-black">
+                        <BedDouble className="size-4" strokeWidth={2.5} />{" "}
+                        HUMBLE
+                      </CardTitle>
+                      <Badge className="bg-humble text-black border-black font-black">
+                        {humble.length}
+                      </Badge>
+                    </CardHeader>
+                    <CardContent>{renderList(humble)}</CardContent>
+                  </Card>
+                </div>
+              </>
+            )}
+          </TabsContent>
+
+          <TabsContent value="weekly" className="space-y-6 mt-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <h2 className="text-xl font-heading font-black">Weekly Report</h2>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="weekId"
+                  value={weekIdInput}
+                  onChange={(e) => setWeekIdInput(e.target.value)}
+                  placeholder="2026-W36"
+                  className="w-36 bg-accent border-2 font-bold shadow-shadow"
+                />
+                <Button
+                  variant="neutral"
+                  className="bg-accent font-black"
+                  onClick={() => void loadWeekly()}
+                >
+                  <RefreshCw className="size-3.5 mr-1" strokeWidth={2.5} /> Load
+                </Button>
+              </div>
+            </div>
+
+            {weeklyLoading ? (
+              <div className="grid gap-4 md:grid-cols-3">
+                {[0, 1, 2].map((i) => (
+                  <Skeleton key={i} className="h-32 border-2 border-border" />
+                ))}
+              </div>
+            ) : !weekly ? (
+              <Card className="border-2 shadow-shadow bg-background">
+                <CardHeader className="border-b-2 pb-2 border-border">
+                  <CardTitle className="flex items-center gap-2">
+                    <Medal className="size-5" strokeWidth={2.5} /> Badges
+                    Collection
+                    <Badge className="bg-black text-white border-black font-black">
+                      {weekIdInput ? weekIdInput : "?"}
+                    </Badge>
                   </CardTitle>
+                  <p className="text-xs font-bold text-foreground/60">
+                    U're not in a group leaderboard yet. Please complete your
+                    weekly report to see your rank and badges.
+                  </p>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="border-2 border-border bg-(--neo-gray-100) p-3">
-                    <p className="text-sm leading-relaxed font-bold">
-                      {weekly.ruleBasedSuggestion}
+                <CardContent className="text-center py-2">
+                  <div className="text-center py-10 border-2 border-dashed border-border">
+                    <Inbox
+                      className="mx-auto size-8 text-foreground"
+                      strokeWidth={2}
+                    />
+                    <p className="text-sm font-black mt-2">
+                      U don't have report for {weekIdInput} yet. Keep going!
+                    </p>
+                    <p className="text-xs font-bold text-foreground/60 mt-1 max-w-xl mx-auto">
+                      Weekly report is formed on Monday 00:00 UTC. If this week
+                      is still on going, check it back after moday or coba try
+                      previous week. Insight is not an assessment, just a
+                      reflection.
                     </p>
                   </div>
-                  {weekly.aiSuggestion && (
-                    <div className="border-2 border-border bg-white p-3">
-                      <p className="text-sm leading-relaxed italic">
-                        “{weekly.aiSuggestion}”
-                      </p>
-                    </div>
-                  )}
-                  <div className="pt-2 flex flex-wrap items-center gap-2">
-                    <Button
-                      variant="neutral"
-                      size="sm"
-                      className="bg-white font-black gap-1.5"
-                      disabled={regenLoading || weeklyLoading}
-                      onClick={async () => {
-                        if (!weekly) return;
-                        setError(null);
-                        setRegenLoading(true);
-                        try {
-                          const regen = getRegenerateSuggestionCallable();
-                          const res = await regen({ weekId: weekly.weekId });
-                          setWeekly((prev) =>
-                            prev
-                              ? {
-                                  ...prev,
-                                  aiSuggestion: (
-                                    res.data as { aiSuggestion: string }
-                                  ).aiSuggestion,
-                                }
-                              : prev,
-                          );
-                        } catch (e: unknown) {
-                          const msg =
-                            (e as { message?: string }).message ||
-                            "Regenerate failed";
-                          setError(msg);
-                        } finally {
-                          setRegenLoading(false);
-                        }
-                      }}
-                    >
-                      <RefreshCw
-                        className={`size-3.5 ${regenLoading ? "animate-spin" : ""}`}
-                        strokeWidth={2.5}
-                      />{" "}
-                      {regenLoading
-                        ? "Generating..."
-                        : weekly?.aiSuggestion
-                          ? "Regenerate AI"
-                          : "Generate AI Suggestion"}
-                    </Button>
-                    <span className="text-xs font-bold text-foreground/60">
-                      Gemini free-tier, cached once, cooldown 1h
-                    </span>
-                  </div>
-                  {error && (
-                    <div className="text-sm font-bold text-red-700 bg-red-50 border-2 border-red-600 p-2">
-                      {error}
-                    </div>
-                  )}
                 </CardContent>
               </Card>
-            </>
-          )}
-        </TabsContent>
-      </Tabs>
-    </div>
+            ) : (
+              <>
+                <div className="grid gap-4 md:grid-cols-3">
+                  <Card className="border-2 shadow-shadow bg-secondary-background">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-xs font-black tracking-widest flex items-center gap-1">
+                        <BarChart3 className="size-3" strokeWidth={2.5} />{" "}
+                        BALANCE INDEX
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-4xl font-black">
+                        {weekly.balanceIndex.toFixed(0)}
+                        <span className="text-sm font-bold">/100</span>
+                      </p>
+                      <div
+                        className="mt-3 h-4 w-full border-2 border-border relative overflow-hidden"
+                        style={{
+                          background:
+                            "linear-gradient(90deg, var(--color-hustle) 0%, var(--color-humble) 100%)",
+                        }}
+                      >
+                        <div
+                          className="absolute top-0 bottom-0 w-1.5 bg-black border border-white shadow-sm"
+                          style={{
+                            left: `calc(${weekly.balanceIndex}% - 3px)`,
+                          }}
+                        />
+                      </div>
+                      <p className="text-xs font-bold text-foreground/60 mt-2">
+                        {weekly.startDate} → {weekly.endDate} • Ideal 50:50
+                        (humble{" "}
+                        {(
+                          (weekly.humbleScore / (weekly.totalScore || 1)) *
+                          100
+                        ).toFixed(0)}
+                        %)
+                      </p>
+                      <Progress
+                        value={weekly.balanceIndex}
+                        className="mt-2 h-2 [&>div]:bg-black"
+                      />
+                    </CardContent>
+                  </Card>
+                  <Card className="border-2 shadow-shadow bg-secondary-background">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-xs font-black tracking-widest">
+                        SCORES
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex gap-4">
+                        <div className="border-2 border-border bg-hustle text-white px-3 py-2 text-center shadow-sm">
+                          <p className="text-xl font-black">
+                            {weekly.hustleScore.toFixed(1)}
+                          </p>
+                          <p className="text-xs font-black">Hustle</p>
+                        </div>
+                        <div className="border-2 border-border bg-humble text-black px-3 py-2 text-center shadow-sm">
+                          <p className="text-xl font-black">
+                            {weekly.humbleScore.toFixed(1)}
+                          </p>
+                          <p className="text-xs font-black">Humble</p>
+                        </div>
+                        <div className="border-2 border-border bg-accent text-black px-3 py-2 text-center shadow-sm">
+                          <p className="text-xl font-black">
+                            {weekly.totalScore.toFixed(1)}
+                          </p>
+                          <p className="text-xs font-black">Total</p>
+                        </div>
+                      </div>
+                      <p className="text-xs font-bold text-foreground/60 mt-3">
+                        Completed {weekly.completedTasksCount} • Missed{" "}
+                        {weekly.missedTasksCount} • Rate{" "}
+                        {(weekly.completionRate * 100).toFixed(0)}%
+                      </p>
+                      <Progress
+                        value={weekly.completionRate * 100}
+                        className="mt-1 h-2 [&>div]:bg-info"
+                      />
+                    </CardContent>
+                  </Card>
+                  <Card className="border-2 shadow-shadow bg-white">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-xs font-black tracking-widest">
+                        META
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm font-black border-2 border-border bg-accent px-2 py-1 inline-block shadow-sm">
+                        {weekly.weekId}
+                      </p>
+                      <p className="text-xs font-bold text-foreground/60 mt-2">
+                        {weekly.startDate} to {weekly.endDate} (Mon-Sun UTC)
+                      </p>
+                      <div className="mt-3 flex gap-2 text-xs font-black">
+                        <span className="border-2 border-border bg-(--neo-gray-100) px-2 py-1">
+                          {weekly.completedTasksCount} done
+                        </span>
+                        <span className="border-2 border-border bg-black text-white px-2 py-1">
+                          {weekly.missedTasksCount} missed
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Weekly charts */}
+                <div className="grid gap-4 lg:grid-cols-2">
+                  <Card className="border-2 shadow-shadow bg-secondary-background">
+                    <CardHeader>
+                      <CardTitle className="text-sm font-black flex items-center gap-2">
+                        <BarChart3 className="size-4" strokeWidth={2.5} />{" "}
+                        Hustle vs Humble (this week)
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ChartContainer
+                        config={{
+                          hustle: {
+                            label: "Hustle",
+                            color: "#FF0052",
+                          },
+                          humble: {
+                            label: "Humble",
+                            color: "#00C68D",
+                          },
+                        }}
+                        className="h-65 w-full"
+                      >
+                        <BarChart
+                          data={[
+                            {
+                              name: weekly.weekId,
+                              hustle: weekly.hustleScore,
+                              humble: weekly.humbleScore,
+                            },
+                          ]}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" tick={{ fontWeight: 700 }} />
+                          <YAxis />
+                          <ChartTooltip content={<ChartTooltipContent />} />
+                          <Bar
+                            dataKey="hustle"
+                            fill="var(--color-hustle)"
+                            stroke="var(--border)"
+                            strokeWidth={2}
+                          />
+                          <Bar
+                            dataKey="humble"
+                            fill="var(--color-humble)"
+                            stroke="var(--border)"
+                            strokeWidth={2}
+                          />
+                        </BarChart>
+                      </ChartContainer>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="border-2 shadow-shadow bg-secondary-background">
+                    <CardHeader>
+                      <CardTitle className="text-sm font-black flex items-center gap-2">
+                        <PieIcon className="size-4" strokeWidth={2.5} /> Score
+                        Composition (this week)
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ChartContainer
+                        config={{
+                          hustle: {
+                            label: "Hustle",
+                            color: "#FF0052",
+                          },
+                          humble: {
+                            label: "Humble",
+                            color: "#00C68D",
+                          },
+                        }}
+                        className="h-65 w-full"
+                      >
+                        <PieChart>
+                          <Pie
+                            data={[
+                              {
+                                name: "Hustle",
+                                value: weekly.hustleScore,
+                                fill: "#FF0052",
+                              },
+                              {
+                                name: "Humble",
+                                value: weekly.humbleScore,
+                                fill: "#00C68D",
+                              },
+                            ]}
+                            dataKey="value"
+                            nameKey="name"
+                            innerRadius={60}
+                            outerRadius={90}
+                            stroke="var(--border)"
+                            strokeWidth={2}
+                            label={({ name, percent }) => {
+                              const pct =
+                                typeof percent === "number" ? percent : 0;
+                              return `${name} ${(pct * 100).toFixed(0)}%`;
+                            }}
+                          />
+                          <ChartTooltip content={<ChartTooltipContent />} />
+                        </PieChart>
+                      </ChartContainer>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {weeklyHistory.length > 1 && (
+                  <Card className="border-2 shadow-shadow bg-secondary-background">
+                    <CardHeader>
+                      <CardTitle className="text-sm font-black flex items-center gap-2">
+                        <TrendingUp className="size-4" strokeWidth={2.5} /> 4
+                        Weeks Trend - Balance & Score
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ChartContainer
+                        config={weeklyTrendConfig}
+                        className="h-65 w-full"
+                      >
+                        <AreaChart data={weeklyTrendData}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="week" tick={{ fontWeight: 700 }} />
+                          <YAxis />
+                          <ChartTooltip content={<ChartTooltipContent />} />
+                          <ChartLegend
+                            content={<ChartLegendContent payload={undefined} />}
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="hustle"
+                            stackId="a"
+                            stroke="var(--color-hustle)"
+                            fill="var(--color-hustle)"
+                            strokeWidth={2}
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="humble"
+                            stackId="a"
+                            stroke="var(--color-humble)"
+                            fill="var(--color-humble)"
+                            strokeWidth={2}
+                          />
+                        </AreaChart>
+                      </ChartContainer>
+                    </CardContent>
+                  </Card>
+                )}
+
+                <Card className="border-accent border-2 bg-(--neo-white) shadow-shadow">
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2 font-black">
+                      Weekly Suggestion
+                      {weekly.aiSuggestion && (
+                        <Badge className="bg-accent text-black border-black font-black text-xs gap-1">
+                          <Sparkles className="size-3" strokeWidth={2.5} /> AI
+                          Enhanced
+                        </Badge>
+                      )}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="border-2 border-border bg-(--neo-gray-100) p-3">
+                      <p className="text-sm leading-relaxed font-bold">
+                        {weekly.ruleBasedSuggestion}
+                      </p>
+                    </div>
+                    {weekly.aiSuggestion && (
+                      <div className="border-2 border-border bg-white p-3">
+                        <p className="text-sm leading-relaxed italic">
+                          “{weekly.aiSuggestion}”
+                        </p>
+                      </div>
+                    )}
+                    <div className="pt-2 flex flex-wrap items-center gap-2">
+                      <Button
+                        variant="neutral"
+                        size="sm"
+                        className="bg-white font-black gap-1.5"
+                        disabled={regenLoading || weeklyLoading}
+                        onClick={async () => {
+                          if (!weekly) return;
+                          setError(null);
+                          setRegenLoading(true);
+                          try {
+                            const regen = getRegenerateSuggestionCallable();
+                            const res = await regen({ weekId: weekly.weekId });
+                            setWeekly((prev) =>
+                              prev
+                                ? {
+                                    ...prev,
+                                    aiSuggestion: (
+                                      res.data as { aiSuggestion: string }
+                                    ).aiSuggestion,
+                                  }
+                                : prev,
+                            );
+                          } catch (e: unknown) {
+                            const msg =
+                              (e as { message?: string }).message ||
+                              "Regenerate failed";
+                            setError(msg);
+                          } finally {
+                            setRegenLoading(false);
+                          }
+                        }}
+                      >
+                        <RefreshCw
+                          className={`size-3.5 ${regenLoading ? "animate-spin" : ""}`}
+                          strokeWidth={2.5}
+                        />{" "}
+                        {regenLoading
+                          ? "Generating..."
+                          : weekly?.aiSuggestion
+                            ? "Regenerate AI"
+                            : "Generate AI Suggestion"}
+                      </Button>
+                      <span className="text-xs font-bold text-foreground/60">
+                        Made by Gemini
+                      </span>
+                    </div>
+                    {error && (
+                      <div className="text-sm font-bold text-red-700 bg-red-50 border-2 border-red-600 p-2">
+                        {error}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </>
+            )}
+          </TabsContent>
+        </Tabs>
+      </div>
+    </main>
   );
 }

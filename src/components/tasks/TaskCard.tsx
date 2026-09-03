@@ -101,19 +101,20 @@ export function TaskCard({
               {isCompleted && (
                 <Badge
                   variant="neutral"
-                  className="text-[10px] bg-black text-white border-black gap-1"
+                  className="text-xs bg-black font-black text-white border-black gap-1"
                 >
-                  <CheckCircle2 className="size-3" strokeWidth={2.5} /> Selesai
+                  <CheckCircle2 className="size-3" strokeWidth={2.5} />{" "}
+                  Completed
                 </Badge>
               )}
               {isMissed && (
                 <Badge
                   variant="neutral"
-                  className="text-[10px] bg-[var(--neo-gray-100)] gap-1"
-                  title="Belum sempat dikerjakan — tidak mengurangi skor"
+                  className="text-xs font-black bg-[var(--neo-gray-100)] gap-1"
+                  title="Don't have time yet, doesn't reduce score"
                 >
-                  <CircleAlert className="size-3" strokeWidth={2.5} /> Belum
-                  sempat
+                  <CircleAlert className="size-3" strokeWidth={2.5} /> Don't
+                  have time yet
                 </Badge>
               )}
             </div>
@@ -123,7 +124,7 @@ export function TaskCard({
               aria-label={`Level ${task.level} of 5`}
             >
               <span className="text-[10px] font-black tracking-widest mr-1">
-                {task.category === "hustle" ? "TEKANAN" : "RELAKSASI"}
+                {task.category === "hustle" ? "PRESSURE" : "RELAXATION"}
               </span>
               {Array.from({ length: 5 }).map((_, i) => (
                 <span
@@ -155,12 +156,12 @@ export function TaskCard({
               className="h-8 flex-1 bg-white font-bold text-xs gap-1.5 hover:bg-black hover:text-white"
               onClick={() => onDelete(task.id)}
             >
-              <Trash2 className="size-3.5" strokeWidth={2.5} /> Hapus
+              <Trash2 className="size-3.5" strokeWidth={2.5} /> Delete
             </Button>
             <Button
               size="sm"
               className={cn(
-                "h-8 flex-1 font-black text-xs gap-1.5 border-2 shadow-sm",
+                "h-8 flex-1 font-black text-xs gap-1.5 border-2 shadow-shadow",
                 accentBg,
                 task.category === "humble" ? "text-black" : "text-white",
               )}
@@ -172,8 +173,11 @@ export function TaskCard({
                 "..."
               ) : (
                 <>
-                  <CheckCircle2 className="size-3.5" strokeWidth={2.5} />{" "}
-                  Selesai
+                  <CheckCircle2
+                    className="text-xs font-black"
+                    strokeWidth={2.5}
+                  />{" "}
+                  Completed
                 </>
               )}
             </Button>
@@ -181,8 +185,8 @@ export function TaskCard({
         )}
 
         {isCompleted && task.completedAt && (
-          <p className="text-[11px] font-bold text-foreground/60 border-t-2 border-dashed border-border pt-2">
-            ✓ Diselesaikan • +{task.score} pts
+          <p className="text-xs font-bold text-foreground/60 border-t-2 border-dashed border-border pt-2">
+            ✓ Completed • +{task.score} pts
           </p>
         )}
       </CardContent>
