@@ -30,7 +30,8 @@ export default async function AppLayout({
             href="/home"
             className="font-heading text-xl font-black tracking-tight"
           >
-            PURRPOSE<span className="text-[var(--color-hustle)]">.</span>
+            PURRPOSE<span className="text-hustle">.</span>
+            <span className="text-humble">.</span>
           </Link>
           <nav className="hidden items-center gap-6 font-heading font-bold md:flex">
             <Link href="/home" className="hover:underline underline-offset-4">

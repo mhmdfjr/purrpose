@@ -117,7 +117,7 @@ export default function RegisterPage() {
     <div className="w-full max-w-6xl grid gap-6 md:grid-cols-[1.05fr_0.95fr] items-center">
       {/* left: branding + benefits */}
       <div className="hidden md:flex flex-col gap-6 pr-4">
-        <Badge className="w-fit bg-[var(--color-humble)] text-black border-border font-black">
+        <Badge className="w-fit bg-humble text-black border-border font-black">
           <Sparkles className="mr-1 size-3" /> JOIN, START BALANCE TODAY!
         </Badge>
         <div>
@@ -125,10 +125,10 @@ export default function RegisterPage() {
             Create ur account
             <br />
             and get
-            <span className="inline-block border-2 border-border bg-[var(--color-accent)] ml-3 px-2 text-black shadow-shadow">
+            <span className="inline-block border-2 border-border bg-accent ml-3 px-2 text-black shadow-shadow">
               ur first
             </span>
-            <span className="inline-block border-2 border-border bg-[var(--color-info)] px-2 text-white shadow-shadow ml-2">
+            <span className="inline-block border-2 border-border bg-info px-2 text-white shadow-shadow ml-2">
               badge.
             </span>
           </h1>
@@ -138,9 +138,9 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        <div className="grid gap-3 max-w-[420px]">
+        <div className="grid gap-3 max-w-105">
           <div className="border-2 border-border bg-white p-3 shadow-shadow flex items-center gap-3">
-            <div className="flex size-8 items-center justify-center border-2 border-border bg-[var(--color-hustle)]">
+            <div className="flex size-8 items-center justify-center border-2 border-border bg-hustle">
               <Briefcase className="size-4 text-white" strokeWidth={2.5} />
             </div>
             <div className="text-sm">
@@ -151,7 +151,7 @@ export default function RegisterPage() {
             </div>
           </div>
           <div className="border-2 border-border bg-white p-3 shadow-shadow flex items-center gap-3">
-            <div className="flex size-8 items-center justify-center border-2 border-border bg-[var(--color-humble)]">
+            <div className="flex size-8 items-center justify-center border-2 border-border bg-humble">
               <BedDouble className="size-4 text-black" strokeWidth={2.5} />
             </div>
             <div className="text-sm">
@@ -161,7 +161,7 @@ export default function RegisterPage() {
               </div>
             </div>
           </div>
-          <div className="border-2 border-border bg-[var(--color-accent)] p-3 shadow-shadow flex items-center gap-3">
+          <div className="border-2 border-border bg-accent p-3 shadow-shadow flex items-center gap-3">
             <div className="flex size-8 items-center justify-center border-2 border-border bg-black text-white">
               <Award className="size-4" strokeWidth={2.5} />
             </div>
@@ -190,10 +190,10 @@ export default function RegisterPage() {
             Register with ur Google account.
           </CardDescription>
           <div className="flex gap-2 pt-1">
-            <span className="size-3 bg-[var(--color-hustle)] border-2 border-border" />
-            <span className="size-3 bg-[var(--color-humble)] border-2 border-border" />
-            <span className="size-3 bg-[var(--color-accent)] border-2 border-border" />
-            <span className="size-3 bg-[var(--color-info)] border-2 border-border" />
+            <span className="size-3 bg-hustle border-2 border-border" />
+            <span className="size-3 bg-humble border-2 border-border" />
+            <span className="size-3 bg-accent border-2 border-border" />
+            <span className="size-3 bg-info border-2 border-border" />
           </div>
         </CardHeader>
 
@@ -249,7 +249,7 @@ export default function RegisterPage() {
 
             <Button
               type="submit"
-              className="w-full bg-[var(--color-accent)] text-black border-border font-black text-base hover:translate-x-boxShadowX hover:translate-y-boxShadowY"
+              className="w-full bg-accent text-black border-border font-black text-base hover:translate-x-boxShadowX hover:translate-y-boxShadowY"
               disabled={loading}
             >
               {loading ? "Membuat..." : "Buat akun"}{" "}

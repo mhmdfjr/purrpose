@@ -21,7 +21,8 @@ export default async function AuthLayout({
             href="/"
             className="font-heading text-xl font-black tracking-tight"
           >
-            PURRPOSE<span className="text-[var(--color-hustle)]">.</span>
+            PURRPOSE<span className="text-hustle">.</span>
+            <span className="text-humble">.</span>
           </Link>
           <nav className="hidden items-center gap-6 font-heading font-bold md:flex">
             <Link href="/#about" className="hover:underline underline-offset-4">
@@ -49,7 +50,7 @@ export default async function AuthLayout({
             <Button
               asChild
               size="sm"
-              className="bg-[var(--color-accent)] text-black hover:translate-x-boxShadowX hover:translate-y-boxShadowY"
+              className="bg-accent text-black hover:translate-x-boxShadowX hover:translate-y-boxShadowY"
             >
               <Link href="/register">
                 Register <ArrowRight className="size-4" />

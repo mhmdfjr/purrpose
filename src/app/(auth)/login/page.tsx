@@ -114,17 +114,17 @@ export default function LoginPage() {
     <div className="w-full max-w-6xl grid gap-6 md:grid-cols-[1.05fr_0.95fr] items-center">
       {/* left: branding + neobrutalism collage */}
       <div className="hidden md:flex flex-col gap-6 pr-4">
-        <Badge className="w-fit bg-[var(--color-accent)] text-black border-border font-black">
+        <Badge className="w-fit bg-accent text-black border-border font-black">
           <Sparkles className="mr-1 size-3" /> WELCOME BACK, BALANCE FIRST
         </Badge>
         <div>
           <h1 className="font-heading text-4xl font-black leading-none tracking-tight">
             Enter and do ur
             <br />
-            <span className="inline-block border-2 border-border bg-[var(--color-hustle)] px-2 text-white shadow-shadow">
+            <span className="inline-block border-2 border-border bg-hustle px-2 text-white shadow-shadow">
               daily
             </span>
-            <span className="inline-block border-2 border-border bg-[var(--color-humble)] px-2 text-black shadow-shadow ml-2">
+            <span className="inline-block border-2 border-border bg-humble px-2 text-black shadow-shadow ml-2">
               progress.
             </span>
           </h1>
@@ -134,10 +134,10 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="relative max-w-[420px]">
-          <Card className="relative z-10 border-[var(--color-hustle)] gap-0 bg-secondary-background rotate-[-1.2deg] shadow-shadow">
+        <div className="relative max-w-105">
+          <Card className="relative z-10 border-hustle gap-0 bg-secondary-background rotate-[-1.2deg] shadow-shadow">
             <CardHeader className="">
-              <CardTitle className="flex items-center gap-2 text-sm text-[var(--color-hustle)]">
+              <CardTitle className="flex items-center gap-2 text-sm text-hustle">
                 <Briefcase className="size-4" strokeWidth={2.5} /> HUSTLE •
                 Today
               </CardTitle>
@@ -150,13 +150,13 @@ export default function LoginPage() {
                 </span>
               </div>
               <div className="h-2 border-2 border-border bg-white">
-                <div className="h-full w-[72%] bg-[var(--color-hustle)]" />
+                <div className="h-full w-[72%] bg-hustle" />
               </div>
             </CardContent>
           </Card>
-          <Card className="absolute -bottom-5 -right-3 z-20 w-[86%] border-[var(--color-humble)] bg-secondary-background rotate-[1deg] shadow-shadow">
+          <Card className="absolute -bottom-5 -right-3 z-20 w-[86%] border-humble bg-secondary-background rotate-1 shadow-shadow">
             <CardHeader className="pb-2">
-              <CardTitle className="flex items-center gap-2 text-sm text-[var(--color-humble)]">
+              <CardTitle className="flex items-center gap-2 text-sm text-humble">
                 <BedDouble className="size-4" strokeWidth={2.5} /> HUMBLE •
                 Recovery
               </CardTitle>
@@ -166,7 +166,7 @@ export default function LoginPage() {
                 Chill walk - 1h <span>LV 2 ••○○○</span>
               </div>
               <div className="h-2 border-2 border-border bg-white">
-                <div className="h-full w-[55%] bg-[var(--color-humble)]" />
+                <div className="h-full w-[55%] bg-humble" />
               </div>
             </CardContent>
           </Card>
@@ -193,10 +193,10 @@ export default function LoginPage() {
             Enter ur email or continue with Google.
           </CardDescription>
           <div className="flex gap-2 pt-1">
-            <span className="size-3 bg-[var(--color-hustle)] border-2 border-border" />
-            <span className="size-3 bg-[var(--color-humble)] border-2 border-border" />
-            <span className="size-3 bg-[var(--color-accent)] border-2 border-border" />
-            <span className="size-3 bg-[var(--color-info)] border-2 border-border" />
+            <span className="size-3 bg-hustle border-2 border-border" />
+            <span className="size-3 bg-humble border-2 border-border" />
+            <span className="size-3 bg-accent border-2 border-border" />
+            <span className="size-3 bg-info border-2 border-border" />
           </div>
         </CardHeader>
 
@@ -244,7 +244,7 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full bg-[var(--color-accent)] text-black border-border font-black text-base hover:translate-x-boxShadowX hover:translate-y-boxShadowY"
+              className="w-full bg-accent text-black border-border font-black text-base hover:translate-x-boxShadowX hover:translate-y-boxShadowY"
               disabled={loading}
             >
               {loading ? "Memproses..." : "Login"}{" "}

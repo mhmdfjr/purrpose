@@ -415,14 +415,14 @@ export default function LeaderboardPage() {
               <Trophy className="size-7" strokeWidth={2.5} /> Leaderboard
             </h1>
             <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
-              <Badge className="bg-[var(--color-accent)] text-black border-black font-black gap-1">
+              <Badge className="bg-accent text-black border-black font-black gap-1">
                 <MapPin className="size-3" strokeWidth={2.5} />{" "}
                 {group?.locationName || groupId}
               </Badge>
               {group?.locationLevel === "province" && (
                 <Badge
                   variant="neutral"
-                  className="bg-[var(--neo-gray-100)] border-black font-black text-xs"
+                  className="bg-(--neo-gray-100) border-black font-black text-xs"
                 >
                   fallback province
                 </Badge>
@@ -458,7 +458,7 @@ export default function LeaderboardPage() {
 
         {/* Self highlight */}
         {selfEntry && (
-          <Card className="border-2 shadow-shadow bg-[var(--color-accent)]">
+          <Card className="border-2 shadow-shadow bg-accent">
             <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <Avatar className="size-10 border-2 border-border rounded-none bg-white">
@@ -508,7 +508,7 @@ export default function LeaderboardPage() {
         {podium.length >= 3 && (
           <div className="grid gap-4 md:grid-cols-3">
             {/* 2nd */}
-            <Card className="order-2 md:order-1 border-2 shadow-shadow bg-[var(--neo-gray-100)] flex flex-col items-center p-4 text-center">
+            <Card className="order-2 md:order-1 border-2 shadow-shadow bg-(--neo-gray-100) flex flex-col items-center p-4 text-center">
               <div className="flex size-10 items-center justify-center border-2 border-border bg-white shadow-sm">
                 <Medal className="size-5" strokeWidth={2.5} />
               </div>
@@ -543,12 +543,9 @@ export default function LeaderboardPage() {
             </Card>
 
             {/* 1st */}
-            <Card className="order-1 md:order-2 border-2 shadow-shadow bg-[var(--color-accent)] flex flex-col items-center p-4 text-center scale-[1.02]">
+            <Card className="order-1 md:order-2 border-2 shadow-shadow bg-accent flex flex-col items-center p-4 text-center scale-[1.02]">
               <div className="flex size-12 items-center justify-center border-2 border-border bg-black shadow-sm">
-                <Crown
-                  className="size-6 text-[var(--color-accent)]"
-                  strokeWidth={2.5}
-                />
+                <Crown className="size-6 text-accent" strokeWidth={2.5} />
               </div>
               <Badge className="mt-2 bg-black text-white border-black font-black gap-1">
                 <Trophy className="size-3" strokeWidth={2.5} /> GOLD • #1
@@ -573,12 +570,9 @@ export default function LeaderboardPage() {
             </Card>
 
             {/* 3rd */}
-            <Card className="order-3 border-2 shadow-shadow bg-[var(--color-info)] text-white flex flex-col items-center p-4 text-center">
+            <Card className="order-3 border-2 shadow-shadow bg-info text-white flex flex-col items-center p-4 text-center">
               <div className="flex size-10 items-center justify-center border-2 border-border bg-white shadow-sm">
-                <Award
-                  className="size-5 text-[var(--color-info)]"
-                  strokeWidth={2.5}
-                />
+                <Award className="size-5 text-info" strokeWidth={2.5} />
               </div>
               <Badge className="mt-2 bg-white text-black border-black font-black">
                 BRONZE • #3
@@ -613,7 +607,7 @@ export default function LeaderboardPage() {
         )}
 
         {isDemo && (
-          <Alert className="bg-[var(--color-accent)] text-black border-black">
+          <Alert className="bg-accent text-black border-black">
             <Sparkles className="size-4" strokeWidth={2.5} />
             <AlertTitle className="font-black">
               Demo Mode - Competitors are Fake
@@ -678,15 +672,13 @@ export default function LeaderboardPage() {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-[var(--neo-gray-100)] border-b-2">
+                  <TableRow className="bg-(--neo-gray-100) border-b-2">
                     <TableHead className="w-20 font-black">
                       <span className="flex items-center gap-1">
                         <Trophy className="size-3" strokeWidth={2.5} /> Rank
                       </span>
                     </TableHead>
-                    <TableHead className="font-black min-w-[180px]">
-                      User
-                    </TableHead>
+                    <TableHead className="font-black min-w-45">User</TableHead>
                     <TableHead className="text-right font-black">Raw</TableHead>
                     <TableHead className="text-right font-black hidden sm:table-cell">
                       Balance
@@ -718,7 +710,7 @@ export default function LeaderboardPage() {
                           key={e.userId}
                           className={
                             isSelf
-                              ? "bg-[var(--color-accent)] font-black border-l-4 border-l-black"
+                              ? "bg-accent font-black border-l-4 border-l-black"
                               : isTop3
                                 ? "bg-white"
                                 : "bg-white"
@@ -727,7 +719,7 @@ export default function LeaderboardPage() {
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <div
-                                className={`flex size-7 items-center justify-center border-2 border-border shadow-sm ${e.rank === 1 ? "bg-[var(--color-accent)]" : e.rank === 2 ? "bg-[var(--neo-gray-100)]" : e.rank === 3 ? "bg-[var(--color-info)] text-white" : "bg-white"}`}
+                                className={`flex size-7 items-center justify-center border-2 border-border shadow-sm ${e.rank === 1 ? "bg-accent" : e.rank === 2 ? "bg-(--neo-gray-100)" : e.rank === 3 ? "bg-info text-white" : "bg-white"}`}
                               >
                                 {rankIcon(e.rank)}
                               </div>
@@ -749,7 +741,7 @@ export default function LeaderboardPage() {
                                 </AvatarFallback>
                               </Avatar>
                               <div className="min-w-0">
-                                <p className="font-heading font-black text-sm leading-none truncate max-w-[140px]">
+                                <p className="font-heading font-black text-sm leading-none truncate max-w-35">
                                   {e.displayName}
                                   {isSelf && " (you)"}
                                 </p>
@@ -779,7 +771,7 @@ export default function LeaderboardPage() {
                           </TableCell>
                           <TableCell className="text-right">
                             <span
-                              className={`inline-block border-2 border-border px-2 py-1 font-black shadow-sm ${e.rank === 1 ? "bg-[var(--color-accent)] text-black" : e.rank === 2 ? "bg-[var(--neo-gray-100)]" : e.rank === 3 ? "bg-[var(--color-info)] text-white" : "bg-black text-white"}`}
+                              className={`inline-block border-2 border-border px-2 py-1 font-black shadow-sm ${e.rank === 1 ? "bg-accent text-black" : e.rank === 2 ? "bg-(--neo-gray-100)" : e.rank === 3 ? "bg-info text-white" : "bg-black text-white"}`}
                             >
                               {e.leaderboardScore.toFixed(1)}
                             </span>
@@ -793,7 +785,7 @@ export default function LeaderboardPage() {
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-between border-t-2 border-border bg-[var(--neo-gray-100)] px-4 py-3">
+            <div className="flex items-center justify-between border-t-2 border-border bg-(--neo-gray-100) px-4 py-3">
               <p className="text-xs font-black">
                 Page {page + 1} / {totalPages} • {filteredSorted.length}{" "}
                 participants
@@ -832,15 +824,15 @@ export default function LeaderboardPage() {
           </CardHeader>
           <CardContent className="text-xs font-bold space-y-2">
             <div className="grid gap-2 sm:grid-cols-3">
-              <div className="border-2 border-border bg-[var(--color-accent)] p-3 flex items-center gap-2 shadow-sm">
+              <div className="border-2 border-border bg-accent p-3 flex items-center gap-2 shadow-sm">
                 <Trophy className="size-5" strokeWidth={2.5} />{" "}
                 <span>Gold Medal Rank 1</span>
               </div>
-              <div className="border-2 border-border bg-[var(--neo-gray-100)] p-3 flex items-center gap-2 shadow-sm">
+              <div className="border-2 border-border bg-(--neo-gray-100) p-3 flex items-center gap-2 shadow-sm">
                 <Medal className="size-5" strokeWidth={2.5} />{" "}
                 <span>Silver Medal Rank 2</span>
               </div>
-              <div className="border-2 border-border bg-[var(--color-info)] text-white p-3 flex items-center gap-2 shadow-sm">
+              <div className="border-2 border-border bg-info text-white p-3 flex items-center gap-2 shadow-sm">
                 <Award className="size-5" strokeWidth={2.5} />{" "}
                 <span>Bronze Medal Rank 3</span>
               </div>

@@ -1,16 +1,16 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 type Props = {
-  imageUrl: string
-  caption: string
-  className?: string
-}
+  imageUrl: string;
+  caption: string;
+  className?: string;
+};
 
 export default function ImageCard({ imageUrl, caption, className }: Props) {
   return (
     <figure
       className={cn(
-        "w-[250px] overflow-hidden rounded-base border-2 border-border bg-main font-base shadow-shadow",
+        "w-62.5 overflow-hidden rounded-base border-2 border-border bg-main font-base shadow-shadow",
         className,
       )}
     >
@@ -19,5 +19,5 @@ export default function ImageCard({ imageUrl, caption, className }: Props) {
         {caption}
       </figcaption>
     </figure>
-  )
+  );
 }

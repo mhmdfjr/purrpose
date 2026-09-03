@@ -1,18 +1,21 @@
-"use client"
+"use client";
 
-import { GripVertical } from "lucide-react"
-import * as ResizablePrimitive from "react-resizable-panels"
+import * as React from "react";
+import { GripVertical } from "lucide-react";
+import {
+  Group as ResizableGroup,
+  Panel as ResizablePanelPrimitive,
+  Separator as ResizableSeparator,
+} from "react-resizable-panels";
 
-import * as React from "react"
-
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 function ResizablePanelGroup({
   className,
   ...props
-}: React.ComponentProps<typeof ResizablePrimitive.PanelGroup>) {
+}: React.ComponentProps<typeof ResizableGroup>) {
   return (
-    <ResizablePrimitive.PanelGroup
+    <ResizableGroup
       data-slot="resizable-panel-group"
       className={cn(
         "flex h-full w-full font-base data-[panel-group-direction=vertical]:flex-col",
@@ -20,31 +23,31 @@ function ResizablePanelGroup({
       )}
       {...props}
     />
-  )
+  );
 }
 
 function ResizablePanel({
   className,
   ...props
-}: React.ComponentProps<typeof ResizablePrimitive.Panel>) {
+}: React.ComponentProps<typeof ResizablePanelPrimitive>) {
   return (
-    <ResizablePrimitive.Panel
+    <ResizablePanelPrimitive
       data-slot="resizable-panel"
       className={cn(className)}
       {...props}
     />
-  )
+  );
 }
 
 function ResizableHandle({
   withHandle,
   className,
   ...props
-}: React.ComponentProps<typeof ResizablePrimitive.PanelResizeHandle> & {
-  withHandle?: boolean
+}: React.ComponentProps<typeof ResizableSeparator> & {
+  withHandle?: boolean;
 }) {
   return (
-    <ResizablePrimitive.PanelResizeHandle
+    <ResizableSeparator
       data-slot="resizable-handle"
       className={cn(
         "relative flex w-0.5 items-center justify-center bg-border after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-black focus-visible:ring-offset-1 data-[panel-group-direction=vertical]:h-0.5 data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:-translate-y-1/2 data-[panel-group-direction=vertical]:after:translate-x-0 [&[data-panel-group-direction=vertical]>div]:rotate-90",
@@ -57,8 +60,8 @@ function ResizableHandle({
           <GripVertical className="size-2.5" />
         </div>
       )}
-    </ResizablePrimitive.PanelResizeHandle>
-  )
+    </ResizableSeparator>
+  );
 }
 
-export { ResizablePanelGroup, ResizablePanel, ResizableHandle }
+export { ResizablePanelGroup, ResizablePanel, ResizableHandle };

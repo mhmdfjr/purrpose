@@ -241,7 +241,7 @@ export default function ProfilePage() {
               Manage your profile, badges, and preferences.
             </p>
           </div>
-          <Badge className="w-fit bg-[var(--color-accent)] text-black border-black font-black gap-1">
+          <Badge className="w-fit bg-accent text-black border-black font-black gap-1">
             <Star className="size-3" strokeWidth={2.5} /> {totalBadges} BADGES
           </Badge>
         </div>
@@ -251,11 +251,11 @@ export default function ProfilePage() {
           <Card className="border-2 shadow-shadow bg-background">
             <CardContent className="p-6">
               <div className="flex gap-4">
-                <Avatar className="size-28 border-2 border-border rounded-none shadow-shadow bg-[var(--color-accent)] shrink-0">
+                <Avatar className="size-28 border-2 border-border rounded-none shadow-shadow bg-accent shrink-0">
                   <AvatarImage
                     src={profile?.avatarUrl || user.photoURL || undefined}
                   />
-                  <AvatarFallback className="rounded-none font-black text-2xl bg-[var(--color-accent)] text-black">
+                  <AvatarFallback className="rounded-none font-black text-2xl bg-accent text-black">
                     {avatarLetter}
                   </AvatarFallback>
                 </Avatar>
@@ -309,14 +309,14 @@ export default function ProfilePage() {
               <div className="my-4 h-0.5 bg-border" />
 
               <div className="grid grid-cols-3 gap-2 text-center">
-                <div className="border-2 border-border bg-[var(--color-accent)] p-2 shadow-sm">
+                <div className="border-2 border-border bg-accent p-2 shadow-sm">
                   <Trophy className="mx-auto size-4" strokeWidth={2.5} />
                   <p className="font-black text-lg leading-none mt-1">
                     {goldCount}
                   </p>
                   <p className="text-xs font-black">Gold</p>
                 </div>
-                <div className="border-2 border-border bg-[var(--neo-gray-100)] p-2 shadow-sm">
+                <div className="border-2 border-border bg-(--neo-gray-100) p-2 shadow-sm">
                   <Medal className="mx-auto size-4" strokeWidth={2.5} />
                   <p className="font-black text-lg leading-none mt-1">
                     {silverCount}
@@ -347,7 +347,7 @@ export default function ProfilePage() {
           </Card>
 
           <div className="space-y-4">
-            <Card className="border-2 shadow-shadow bg-[var(--color-accent)]">
+            <Card className="border-2 shadow-shadow bg-accent">
               <CardHeader className="border-b-2 pb-2 border-border">
                 <CardTitle className="text-sm font-black flex items-center gap-1">
                   <Sparkles className="size-4" strokeWidth={2.5} /> QUICK STATS
@@ -368,7 +368,7 @@ export default function ProfilePage() {
                   <span>AI Suggestions</span>
                   <Badge
                     variant="neutral"
-                    className={`font-black border-black ${aiEnabled ? "bg-[var(--color-humble)] text-black" : "bg-[var(--neo-gray-100)]"}`}
+                    className={`font-black border-black ${aiEnabled ? "bg-humble text-black" : "bg-(--neo-gray-100)"}`}
                   >
                     {aiEnabled ? "ON" : "OFF"}
                   </Badge>
@@ -473,7 +473,7 @@ export default function ProfilePage() {
 
               <div className="flex items-center justify-between border-2 border-border bg-white p-3 shadow-sm">
                 <div className="flex items-center gap-3">
-                  <div className="flex size-8 items-center justify-center border-2 border-border bg-[var(--color-accent)]">
+                  <div className="flex size-8 items-center justify-center border-2 border-border bg-accent">
                     <Sparkles className="size-4 text-black" strokeWidth={2.5} />
                   </div>
                   <div>
@@ -500,7 +500,7 @@ export default function ProfilePage() {
               <Button
                 type="submit"
                 disabled={saving}
-                className="bg-[var(--color-accent)] text-black border-black font-black gap-1.5"
+                className="bg-accent text-black border-black font-black gap-1.5"
               >
                 <Save className="size-4" strokeWidth={2.5} />{" "}
                 {saving ? "Saving..." : "Save Changes"}
@@ -571,7 +571,7 @@ export default function ProfilePage() {
                       style={{ background: bg }}
                     >
                       <div
-                        className={`flex size-10 items-center justify-center border-2 border-border shadow-sm shrink-0 ${isGold ? "bg-black text-[var(--color-accent)]" : isSilver ? "bg-white" : "bg-white text-[var(--color-info)]"}`}
+                        className={`flex size-10 items-center justify-center border-2 border-border shadow-sm shrink-0 ${isGold ? "bg-black text-accent" : isSilver ? "bg-white" : "bg-white text-info"}`}
                       >
                         <Icon className="size-5" strokeWidth={2.5} />
                       </div>

@@ -130,9 +130,9 @@ export default function HomePage() {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <Avatar className="size-12 border-2 border-border shadow-shadow rounded-none bg-[var(--color-accent)]">
+              <Avatar className="size-12 border-2 border-border shadow-shadow rounded-none bg-accent">
                 <AvatarImage src={user?.photoURL || undefined} />
-                <AvatarFallback className="rounded-none font-heading font-black bg-[var(--color-accent)] text-black">
+                <AvatarFallback className="rounded-none font-heading font-black bg-accent text-black">
                   {avatarLetter}
                 </AvatarFallback>
               </Avatar>
@@ -189,7 +189,7 @@ export default function HomePage() {
 
               <Button
                 onClick={() => handleAdd()}
-                className="bg-[var(--color-accent)] text-black border-border font-black gap-1.5"
+                className="bg-accent text-black border-border font-black gap-1.5"
               >
                 <Plus className="size-4" strokeWidth={2.5} /> Add Task
               </Button>
@@ -201,7 +201,7 @@ export default function HomePage() {
             <Card className="border-2 bg-secondary-background shadow-shadow py-4 gap-3">
               <CardContent className="px-4 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-black tracking-widest flex items-center gap-1 text-[var(--color-hustle)]">
+                  <p className="text-xs font-black tracking-widest flex items-center gap-1 text-hustle">
                     <Briefcase className="size-3" strokeWidth={2.5} /> HUSTLE
                   </p>
                   <p className="font-heading text-2xl font-black">
@@ -213,7 +213,7 @@ export default function HomePage() {
                     Completed
                   </p>
                 </div>
-                <div className="flex size-10 items-center justify-center border-2 border-border bg-[var(--color-hustle)] shadow-sm">
+                <div className="flex size-10 items-center justify-center border-2 border-border bg-hustle shadow-sm">
                   <Briefcase className="size-5 text-white" strokeWidth={2.5} />
                 </div>
               </CardContent>
@@ -222,7 +222,7 @@ export default function HomePage() {
             <Card className="border-2 bg-secondary-background shadow-shadow py-4 gap-3">
               <CardContent className="px-4 flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-black tracking-widest flex items-center gap-1 text-[var(--color-humble)]">
+                  <p className="text-xs font-black tracking-widest flex items-center gap-1 text-humble">
                     <BedDouble className="size-3" strokeWidth={2.5} /> HUMBLE
                   </p>
                   <p className="font-heading text-2xl font-black">
@@ -234,7 +234,7 @@ export default function HomePage() {
                     Completed
                   </p>
                 </div>
-                <div className="flex size-10 items-center justify-center border-2 border-border bg-[var(--color-humble)] shadow-sm">
+                <div className="flex size-10 items-center justify-center border-2 border-border bg-humble shadow-sm">
                   <BedDouble className="size-5 text-black" strokeWidth={2.5} />
                 </div>
               </CardContent>
@@ -278,7 +278,7 @@ export default function HomePage() {
 
           {/* Balance hint */}
           <div className="flex flex-wrap gap-2 text-xs font-black">
-            <span className="border-2 border-border bg-[var(--color-accent)] px-2 py-1 shadow-sm flex items-center gap-1">
+            <span className="border-2 border-border bg-accent px-2 py-1 shadow-sm flex items-center gap-1">
               <BarChart3 className="size-3" strokeWidth={2.5} /> Balance: Hustle{" "}
               {totalHustleScore.toFixed(1)} vs Humble{" "}
               {totalHumbleScore.toFixed(1)}
@@ -300,7 +300,7 @@ export default function HomePage() {
         )}
 
         {isOverCap && (
-          <Alert className="bg-[var(--color-accent)] text-black border-border">
+          <Alert className="bg-accent text-black border-border">
             <AlertTriangle className="size-4" strokeWidth={2.5} />
             <AlertTitle className="font-black">
               Daily cap 24hr exceeded!
@@ -332,22 +332,20 @@ export default function HomePage() {
             <Card className="border-2 shadow-shadow bg-secondary-background flex flex-col">
               <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2 border-b-2 border-border bg-white">
                 <div className="flex items-center gap-2">
-                  <div className="flex size-8 items-center justify-center border-2 border-border bg-[var(--color-hustle)]">
+                  <div className="flex size-8 items-center justify-center border-2 border-border bg-hustle">
                     <Briefcase
                       className="size-4 text-white"
                       strokeWidth={2.5}
                     />
                   </div>
-                  <CardTitle className="text-[var(--color-hustle)] text-lg">
-                    HUSTLE
-                  </CardTitle>
-                  <Badge className="bg-[var(--color-hustle)] text-white border-black font-black">
+                  <CardTitle className="text-hustle text-lg">HUSTLE</CardTitle>
+                  <Badge className="bg-hustle text-white border-black font-black">
                     {hustle.length}
                   </Badge>
                 </div>
                 <Button
                   size="sm"
-                  className="bg-[var(--color-hustle)] text-white border-black font-black shadow-shadow"
+                  className="bg-hustle text-white border-black font-black shadow-shadow"
                   onClick={() => handleAdd("hustle")}
                 >
                   <Plus className="size-3.5" strokeWidth={2.5} /> Hustle
@@ -355,7 +353,7 @@ export default function HomePage() {
               </CardHeader>
               <CardContent className="space-y-3 flex-1">
                 {hustle.length === 0 ? (
-                  <div className="text-center py-8 border-2 border-dashed border-border bg-[var(--neo-gray-100)]">
+                  <div className="text-center py-8 border-2 border-dashed border-border bg-(--neo-gray-100)">
                     <Inbox
                       className="mx-auto size-8 text-foreground/40"
                       strokeWidth={2}
@@ -363,13 +361,13 @@ export default function HomePage() {
                     <p className="mt-2 text-sm font-black">
                       U don't have any Hustle today
                     </p>
-                    <p className="mx-auto mt-1 max-w-[260px] text-xs leading-relaxed text-foreground/60">
+                    <p className="mx-auto mt-1 max-w-65 text-xs leading-relaxed text-foreground/60">
                       Let's add some Hustle: work, study, or side project to
                       earn points and stay productive.
                     </p>
                     <Button
                       size="sm"
-                      className="mt-4 bg-[var(--color-hustle)] text-white border-black font-black"
+                      className="mt-4 bg-hustle text-white border-black font-black"
                       onClick={() => handleAdd("hustle")}
                     >
                       <Plus className="size-3.5" strokeWidth={2.5} /> Add Hustle
@@ -393,22 +391,20 @@ export default function HomePage() {
             <Card className="border-2 shadow-shadow bg-secondary-background flex flex-col">
               <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2 border-b-2 border-border bg-white">
                 <div className="flex items-center gap-2">
-                  <div className="flex size-8 items-center justify-center border-2 border-border bg-[var(--color-humble)]">
+                  <div className="flex size-8 items-center justify-center border-2 border-border bg-humble">
                     <BedDouble
                       className="size-4 text-black"
                       strokeWidth={2.5}
                     />
                   </div>
-                  <CardTitle className="text-[var(--color-humble)] text-lg">
-                    HUMBLE
-                  </CardTitle>
-                  <Badge className="bg-[var(--color-humble)] text-black border-black font-black">
+                  <CardTitle className="text-humble text-lg">HUMBLE</CardTitle>
+                  <Badge className="bg-humble text-black border-black font-black">
                     {humble.length}
                   </Badge>
                 </div>
                 <Button
                   size="sm"
-                  className="bg-[var(--color-humble)] text-black border-black font-black shadow-shadow"
+                  className="bg-humble text-black border-black font-black shadow-shadow"
                   onClick={() => handleAdd("humble")}
                 >
                   <Plus className="size-3.5" strokeWidth={2.5} /> Humble
@@ -416,7 +412,7 @@ export default function HomePage() {
               </CardHeader>
               <CardContent className="space-y-3 flex-1">
                 {humble.length === 0 ? (
-                  <div className="text-center py-8 border-2 border-dashed border-border bg-[var(--neo-gray-100)]">
+                  <div className="text-center py-8 border-2 border-dashed border-border bg-(--neo-gray-100)">
                     <Inbox
                       className="mx-auto size-8 text-foreground/40"
                       strokeWidth={2}
@@ -424,7 +420,7 @@ export default function HomePage() {
                     <p className="mt-2 text-sm font-black">
                       U don't have any Humble today
                     </p>
-                    <p className="mx-auto mt-1 max-w-[260px] text-xs leading-relaxed text-foreground/60">
+                    <p className="mx-auto mt-1 max-w-65 text-xs leading-relaxed text-foreground/60">
                       Add some rest time: sleep, take a walk, or do some
                       journaling to stay balanced.
                     </p>

@@ -734,7 +734,7 @@ export default function ReportPage() {
                   <CardContent className="">
                     <ChartContainer
                       config={levelConfig}
-                      className="h-[220px] w-full"
+                      className="h-55 w-full"
                     >
                       <AreaChart
                         accessibilityLayer

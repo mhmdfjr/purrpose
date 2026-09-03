@@ -35,10 +35,7 @@ export function TaskCard({
   const isPending = task.status === "pending";
   const accent =
     task.category === "hustle" ? "var(--color-hustle)" : "var(--color-humble)";
-  const accentBg =
-    task.category === "hustle"
-      ? "bg-[var(--color-hustle)]"
-      : "bg-[var(--color-humble)]";
+  const accentBg = task.category === "hustle" ? "bg-hustle" : "bg-humble";
 
   return (
     <Card
@@ -71,7 +68,7 @@ export function TaskCard({
           <div className="flex-1 min-w-0 space-y-2">
             <p
               className={cn(
-                "text-sm font-heading font-black leading-tight break-words",
+                "text-sm font-heading font-black leading-tight wrap-break-word",
                 isCompleted && "line-through decoration-2",
               )}
             >
@@ -94,7 +91,7 @@ export function TaskCard({
                 {task.durationHours}h
               </span>
               {task.score !== null && (
-                <span className="inline-flex items-center gap-1 border-2 border-border bg-[var(--color-accent)] px-1.5 py-0.5 text-xs font-black">
+                <span className="inline-flex items-center gap-1 border-2 border-border bg-accent px-1.5 py-0.5 text-xs font-black">
                   <Award className="size-3" strokeWidth={2.5} /> {task.score}
                 </span>
               )}
@@ -110,7 +107,7 @@ export function TaskCard({
               {isMissed && (
                 <Badge
                   variant="neutral"
-                  className="text-xs font-black bg-[var(--neo-gray-100)] gap-1"
+                  className="text-xs font-black bg-(--neo-gray-100) gap-1"
                   title="Don't have time yet, doesn't reduce score"
                 >
                   <CircleAlert className="size-3" strokeWidth={2.5} /> Don't
@@ -184,7 +181,7 @@ export function TaskCard({
           </div>
         )}
 
-        {isCompleted && task.completedAt && (
+        {isCompleted && Boolean(task.completedAt) && (
           <p className="text-xs font-bold text-foreground/60 border-t-2 border-dashed border-border pt-2">
             ✓ Completed • +{task.score} pts
           </p>

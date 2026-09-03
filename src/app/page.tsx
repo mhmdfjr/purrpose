@@ -43,7 +43,7 @@ function Nav() {
           href="/"
           className="font-heading text-xl font-black tracking-tight"
         >
-          PURRPOSE<span className="text-[var(--color-hustle)]">.</span>
+          PURRPOSE<span className="text-hustle">.</span>
         </Link>
         <nav className="hidden items-center gap-6 font-heading font-bold md:flex">
           <Link href="#about" className="hover:underline underline-offset-4">
@@ -71,7 +71,7 @@ function Nav() {
           <Button
             asChild
             size="sm"
-            className="bg-[var(--color-accent)] text-black hover:translate-x-boxShadowX hover:translate-y-boxShadowY"
+            className="bg-accent text-black hover:translate-x-boxShadowX hover:translate-y-boxShadowY"
           >
             <Link href="/login">
               Login <ArrowRight className="size-4" />
@@ -90,7 +90,7 @@ function Hero() {
         <div className="grid gap-8 md:grid-cols-2 md:items-center">
           {/* left copy */}
           <div className="space-y-6">
-            <Badge className="bg-[var(--color-accent)] text-black border-border px-3 py-1 text-xs font-black">
+            <Badge className="bg-accent text-black border-border px-3 py-1 text-xs font-black">
               <Sparkles className="mr-1 size-3" /> BALANCE = HUSTLE × HUMBLE
             </Badge>
 
@@ -98,25 +98,21 @@ function Hero() {
               Balance Ur Day,
               <br />
               Get{" "}
-              <span className="inline-block border-2 border-border bg-[var(--color-hustle)] px-2 text-white shadow-shadow">
+              <span className="inline-block border-2 border-border bg-hustle px-2 text-white shadow-shadow">
                 Productive.
               </span>
-              <span className="inline-block border-2 border-border bg-[var(--color-humble)] px-2 text-black shadow-shadow ml-2">
+              <span className="inline-block border-2 border-border bg-humble px-2 text-black shadow-shadow ml-2">
                 .
               </span>
             </h1>
 
             <p className="max-w-xl text-base leading-relaxed text-foreground/80">
               Purrpose helps u to track{" "}
-              <span className="border-b-2 border-[var(--color-accent)] font-bold">
-                Hustle
-              </span>{" "}
+              <span className="border-b-2 border-accent font-bold">Hustle</span>{" "}
               (work, study, build) and{" "}
-              <span className="border-b-2 border-[var(--color-accent)] font-bold">
-                Humble
-              </span>{" "}
+              <span className="border-b-2 border-accent font-bold">Humble</span>{" "}
               (rest, reflection, recharge) without punishment. Get highest{" "}
-              <span className="border-b-2 border-[var(--color-accent)] font-bold">
+              <span className="border-b-2 border-accent font-bold">
                 Balance Index
               </span>{" "}
               , climb ur leaderboard, claim ur badge.
@@ -126,7 +122,7 @@ function Hero() {
               <Button
                 asChild
                 size="lg"
-                className="bg-[var(--color-accent)] text-black border-border text-base font-black"
+                className="bg-accent text-black border-border text-base font-black"
               >
                 <Link href="/login">
                   Start Now <ArrowRight className="size-4" />
@@ -144,37 +140,37 @@ function Hero() {
 
             <div className="flex items-center gap-3 text-xs font-bold">
               <span className="flex items-center gap-1">
-                <span className="size-2 bg-[var(--color-hustle)] border border-border" />{" "}
+                <span className="size-2 bg-hustle border border-border" />{" "}
                 Non-punitive
               </span>
               <span className="flex items-center gap-1">
-                <span className="size-2 bg-[var(--color-humble)] border border-border" />{" "}
+                <span className="size-2 bg-humble border border-border" />{" "}
                 Weekly reset
               </span>
               <span className="flex items-center gap-1">
-                <span className="size-2 bg-[var(--color-accent)] border border-border" />{" "}
+                <span className="size-2 bg-accent border border-border" />{" "}
                 Kota-level rank
               </span>
             </div>
           </div>
 
           {/* right visual */}
-          <div className="relative mx-auto w-full max-w-[420px] md:ml-auto">
+          <div className="relative mx-auto w-full max-w-105 md:ml-auto">
             {/* stacked cards - neobrutalism */}
             <div className="relative">
-              <Card className="relative z-10 border-[var(--color-hustle)] bg-secondary-background p-0 shadow-shadow rotate-[-1.5deg]">
+              <Card className="relative z-10 border-hustle bg-secondary-background p-0 shadow-shadow rotate-[-1.5deg]">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2 text-[var(--color-hustle)]">
+                    <CardTitle className="flex items-center gap-2 text-hustle">
                       <Briefcase className="size-5" strokeWidth={2.5} /> HUSTLE
                     </CardTitle>
-                    <Badge className="bg-[var(--color-hustle)] text-white border-border">
+                    <Badge className="bg-hustle text-white border-border">
                       4.2 pts
                     </Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
-                  <div className="flex items-center justify-between border-2 border-border bg-[var(--neo-gray-100)] p-2">
+                  <div className="flex items-center justify-between border-2 border-border bg-(--neo-gray-100) p-2">
                     <span className="font-bold">Deep work - 2h</span>
                     <span className="flex items-center gap-1 text-xs font-black">
                       <Check className="size-3" strokeWidth={2.5} /> DONE
@@ -185,7 +181,7 @@ function Hero() {
                     <span className="text-xs">Lv 3 •••○○</span>
                   </div>
                   <div className="h-2 border-2 border-border bg-white">
-                    <div className="h-full w-[68%] bg-[var(--color-hustle)]" />
+                    <div className="h-full w-[68%] bg-hustle" />
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Today's total: 3.5h • Score 7.1
@@ -193,13 +189,13 @@ function Hero() {
                 </CardContent>
               </Card>
 
-              <Card className="absolute -bottom-6 -right-2 z-20 w-[88%] border-[var(--color-humble)] bg-secondary-background p-0 shadow-shadow rotate-[1.2deg] md:-right-4">
+              <Card className="absolute -bottom-6 -right-2 z-20 w-[88%] border-humble bg-secondary-background p-0 shadow-shadow rotate-[1.2deg] md:-right-4">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2 text-[var(--color-humble)]">
+                    <CardTitle className="flex items-center gap-2 text-humble">
                       <BedDouble className="size-5" strokeWidth={2.5} /> HUMBLE
                     </CardTitle>
-                    <Badge className="bg-[var(--color-humble)] text-black border-border">
+                    <Badge className="bg-humble text-black border-border">
                       3.8 pts
                     </Badge>
                   </div>
@@ -211,12 +207,12 @@ function Hero() {
                       <Check className="size-3" strokeWidth={2.5} /> DONE
                     </span>
                   </div>
-                  <div className="flex items-center justify-between border-2 border-border bg-[var(--neo-gray-100)] p-2 opacity-80">
+                  <div className="flex items-center justify-between border-2 border-border bg-(--neo-gray-100) p-2 opacity-80">
                     <span className="font-bold">Journaling - 0.5h</span>
                     <span className="text-xs">Lv 2 ••○○○</span>
                   </div>
                   <div className="h-2 border-2 border-border bg-white">
-                    <div className="h-full w-[52%] bg-[var(--color-humble)]" />
+                    <div className="h-full w-[52%] bg-humble" />
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Balance recovery : Score 83/100
@@ -225,7 +221,7 @@ function Hero() {
               </Card>
 
               {/* floating accent */}
-              <div className="absolute -top-4 -left-2 z-30 hidden border-2 border-border bg-[var(--color-accent)] px-3 py-2 font-heading text-xs font-black shadow-shadow md:block">
+              <div className="absolute -top-4 -left-2 z-30 hidden border-2 border-border bg-accent px-3 py-2 font-heading text-xs font-black shadow-shadow md:block">
                 BALANCE 83 • LEADERBOARD #3
               </div>
             </div>
@@ -248,7 +244,7 @@ function About() {
             </Badge>
             <h2 className="mt-3 font-heading text-3xl font-black leading-none md:text-4xl">
               Balance productivity without{" "}
-              <span className="bg-[var(--color-accent)] px-1 border-2 border-border">
+              <span className="bg-accent px-1 border-2 border-border">
                 guilt.
               </span>
             </h2>
@@ -262,7 +258,7 @@ function About() {
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           <Card className="border-border bg-secondary-background">
             <CardHeader>
-              <div className="flex size-10 items-center justify-center border-2 border-border bg-[var(--color-hustle)] shadow-shadow">
+              <div className="flex size-10 items-center justify-center border-2 border-border bg-hustle shadow-shadow">
                 <Zap className="size-5 text-white" strokeWidth={2.5} />
               </div>
               <CardTitle className="text-xl">Hustle</CardTitle>
@@ -287,7 +283,7 @@ function About() {
 
           <Card className="border-border bg-secondary-background">
             <CardHeader>
-              <div className="flex size-10 items-center justify-center border-2 border-border bg-[var(--color-humble)] shadow-shadow">
+              <div className="flex size-10 items-center justify-center border-2 border-border bg-humble shadow-shadow">
                 <Heart className="size-5 text-black" strokeWidth={2.5} />
               </div>
               <CardTitle className="text-xl">Humble</CardTitle>
@@ -309,7 +305,7 @@ function About() {
             </CardContent>
           </Card>
 
-          <Card className="border-border bg-[var(--color-accent)] text-black">
+          <Card className="border-border bg-accent text-black">
             <CardHeader>
               <div className="flex size-10 items-center justify-center border-2 border-border bg-secondary-background shadow-shadow">
                 <BarChart3 className="size-5" strokeWidth={2.5} />
@@ -389,9 +385,10 @@ function HowItWorks() {
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <h2 className="font-heading text-3xl font-black md:text-4xl">
             Start Purrpose with{" "}
-            <span className="border-2 border-border bg-[var(--color-info)] px-2 text-white shadow-shadow">
+            <span className="border-2 border-border bg-info px-2 text-white shadow-shadow">
               Only 3 Steps.
             </span>
+            ``
           </h2>
           <p className="max-w-md text-sm text-foreground/70">
             Conventional flow (clear navigation, standard hierarchy),
@@ -437,7 +434,7 @@ function HowItWorks() {
                         <Users className="size-4" strokeWidth={2.5} />
                         Group: Jakarta • Rank #3 • Score 42.1
                       </div>
-                      <div className="mt-2 h-2 border border-border bg-[var(--neo-gray-100)]">
+                      <div className="mt-2 h-2 border border-border bg-(--neo-gray-100)">
                         <div
                           className="h-full bg-black"
                           style={{
@@ -472,7 +469,7 @@ function FinalCTA() {
   return (
     <section className="bg-background border-t-2 border-border">
       <div className="mx-auto max-w-6xl px-4 py-12">
-        <Card className="border-2 border-border bg-[var(--color-accent)] p-0 shadow-shadow">
+        <Card className="border-2 border-border bg-accent p-0 shadow-shadow">
           <CardContent className="p-6 md:p-10">
             <div className="grid gap-6 md:grid-cols-[1.2fr_0.8fr] md:items-center">
               <div>
