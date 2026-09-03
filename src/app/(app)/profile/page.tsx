@@ -202,14 +202,16 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="space-y-4">
-        <Skeleton className="h-10 w-48 border-2 border-border" />
-        <div className="grid gap-4 md:grid-cols-3">
-          {[0, 1, 2].map((i) => (
-            <Skeleton key={i} className="h-40 border-2 border-border" />
-          ))}
+      <main className="mx-auto min-h-svh w-full bg-white">
+        <div className="space-y-4">
+          <Skeleton className="h-10 w-48 border-2 border-border" />
+          <div className="grid gap-4 md:grid-cols-3">
+            {[0, 1, 2].map((i) => (
+              <Skeleton key={i} className="h-40 border-2 border-border" />
+            ))}
+          </div>
         </div>
-      </div>
+      </main>
     );
   }
 
@@ -340,7 +342,7 @@ export default function ProfilePage() {
                   </p>
                   <p className="text-xs font-black">Silver</p>
                 </div>
-                <div className="border-2 border-border bg-yellow-700 text-white p-2 shadow-sm">
+                <div className="border-2 border-border bg-info text-white p-2 shadow-sm">
                   <Award className="mx-auto size-4" strokeWidth={2.5} />
                   <p className="font-black text-lg leading-none mt-1">
                     {bronzeCount}

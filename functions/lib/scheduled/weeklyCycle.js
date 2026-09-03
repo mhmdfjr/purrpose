@@ -329,6 +329,9 @@ exports.weeklyCycleJob = (0, scheduler_1.onSchedule)("0 0 * * 1", async () => {
                     const entryRef = groupRef.collection("entries").doc(u.uid);
                     batch.set(entryRef, {
                         userId: u.uid,
+                        displayName: u.displayName,
+                        avatarUrl: u.avatarUrl,
+                        city: u.city,
                         weeklyRawScore: u.weeklyRawScore,
                         balanceIndex: u.balanceIndex,
                         completionRate: u.completionRate,

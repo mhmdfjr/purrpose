@@ -53,6 +53,9 @@ import {
 
 type Entry = {
   userId: string;
+  displayName?: string;
+  avatarUrl?: string | null;
+  city?: string;
   weeklyRawScore: number;
   balanceIndex: number;
   completionRate: number;
@@ -271,6 +274,17 @@ export default function LeaderboardPage() {
 
       for (const eDoc of entriesSnap.docs) {
         const entry = eDoc.data() as Entry;
+        // Prefer denormalized fields on the entry (readable by all group members).
+        // Fall back to reading users/{uid} for own profile or legacy entries.
+        if (entry.displayName && entry.city !== undefined) {
+          list.push({
+            ...entry,
+            displayName: entry.displayName || entry.userId.slice(0, 6),
+            avatarUrl: entry.avatarUrl || null,
+            city: entry.city,
+          });
+          continue;
+        }
         try {
           const profSnap = await getDoc(doc(db, "users", entry.userId));
           const prof = profSnap.exists()
@@ -409,40 +423,31 @@ export default function LeaderboardPage() {
     <main className="mx-auto min-h-svh w-full bg-background">
       <div className="mx-auto space-y-6 max-w-6xl p-4 md:p-6">
         {/* Header */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="text-3xl font-heading font-black flex items-center gap-2">
-              <Trophy className="size-7" strokeWidth={2.5} /> Leaderboard
-            </h1>
-            <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
-              <Badge className="bg-accent text-black border-black font-black gap-1">
-                <MapPin className="size-3" strokeWidth={2.5} />{" "}
-                {group?.locationName || groupId}
+        <div>
+          <h1 className="text-3xl font-heading font-black flex items-center gap-2">
+            <Trophy className="size-7" strokeWidth={2.5} /> Leaderboard
+          </h1>
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+            <Badge className="bg-accent text-black border-black font-black gap-1">
+              <MapPin className="size-3" strokeWidth={2.5} />{" "}
+              {group?.locationName || groupId}
+            </Badge>
+            {group?.locationLevel === "province" && (
+              <Badge
+                variant="neutral"
+                className="bg-(--neo-gray-100) border-black font-black text-xs"
+              >
+                fallback province
               </Badge>
-              {group?.locationLevel === "province" && (
-                <Badge
-                  variant="neutral"
-                  className="bg-(--neo-gray-100) border-black font-black text-xs"
-                >
-                  fallback province
-                </Badge>
-              )}
-              {isDemo && (
-                <Badge className="bg-black text-white border-black font-black text-xs">
-                  DEMO
-                </Badge>
-              )}
-              <Badge className="bg-info text-white border-black font-black text-xs">
-                Week {cycleId}
+            )}
+            {isDemo && (
+              <Badge className="bg-black text-white border-black font-black text-xs">
+                DEMO
               </Badge>
-            </div>
-            <p className="text-xs font-bold text-foreground mt-1 flex items-center gap-1">
-              {group?.memberCount} Participants {group?.status}
-              <Sparkles className="size-3" strokeWidth={2.5} /> Score = raw ×
-              balanceWeight × completionWeight
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
+            )}
+            <Badge className="bg-info text-white border-black font-black text-xs">
+              Week {cycleId}
+            </Badge>
             <Badge variant="neutral" className="bg-white border-2 font-black">
               <Users className="size-3 mr-1" strokeWidth={2.5} /> Group{" "}
               {entries.length}
@@ -460,44 +465,46 @@ export default function LeaderboardPage() {
         {selfEntry && (
           <Card className="border-2 shadow-shadow bg-accent">
             <CardContent className="px-4 py-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <Avatar className="size-10 border-2 border-border rounded-none bg-white">
-                  <AvatarImage src={selfEntry.avatarUrl || undefined} />
-                  <AvatarFallback className="rounded-none font-black bg-white text-black">
-                    {(selfEntry.displayName || "?").slice(0, 1).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-heading font-black leading-none">
-                    {selfEntry.displayName}{" "}
-                    <span className="text-xs bg-black text-white px-1 ml-1">
-                      YOU
-                    </span>
-                  </p>
-                  <p className="text-xs font-bold flex items-center gap-1">
-                    <MapPin className="size-3" strokeWidth={2.5} />
-                    {selfEntry.city || "-"} • Rank #{selfEntry.rank}
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-2 text-xs font-black">
-                <div className="border-2 border-border bg-info text-white px-2 py-1 text-center shadow-sm">
-                  <div className="text-lg leading-none">
-                    {selfEntry.leaderboardScore.toFixed(1)}
+              <div className="w-full flex items-center justify-between">
+                <div className="flex gap-2 items-start">
+                  <Avatar className="size-12 border-2 border-border rounded-none bg-white">
+                    <AvatarImage src={selfEntry.avatarUrl || undefined} />
+                    <AvatarFallback className="rounded-none font-black bg-white text-black">
+                      {(selfEntry.displayName || "?").slice(0, 1).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-heading font-black leading-none">
+                      {selfEntry.displayName}{" "}
+                    </p>
+                    <p className="text-xs font-bold flex items-center gap-1">
+                      <MapPin className="size-3" strokeWidth={2.5} />
+                      {selfEntry.city || "-"}
+                    </p>
+                    <p className="text-xs bg-black text-white px-1">
+                      Rank #{selfEntry.rank}
+                    </p>
                   </div>
-                  <div>Score</div>
                 </div>
-                <div className="border-2 border-border bg-hustle text-white px-2 py-1 text-center shadow-sm">
-                  <div className="text-lg leading-none">
-                    {selfEntry.balanceIndex.toFixed(0)}
+                <div className="flex gap-2 text-xs font-black">
+                  <div className="border-2 border-border bg-info text-white px-2 py-1 text-center shadow-sm">
+                    <div className="text-lg leading-none">
+                      {selfEntry.leaderboardScore.toFixed(1)}
+                    </div>
+                    <div>Score</div>
                   </div>
-                  <div>Balance</div>
-                </div>
-                <div className="border-2 border-border bg-humble px-2 py-1 text-center shadow-sm">
-                  <div className="text-lg leading-none">
-                    {(selfEntry.completionRate * 100).toFixed(0)}%
+                  <div className="border-2 border-border bg-hustle text-white px-2 py-1 text-center shadow-sm">
+                    <div className="text-lg leading-none">
+                      {selfEntry.balanceIndex.toFixed(0)}
+                    </div>
+                    <div>Balance</div>
                   </div>
-                  <div>Done</div>
+                  <div className="border-2 border-border bg-humble px-2 py-1 text-center shadow-sm">
+                    <div className="text-lg leading-none">
+                      {(selfEntry.completionRate * 100).toFixed(0)}%
+                    </div>
+                    <div>Done</div>
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -506,102 +513,127 @@ export default function LeaderboardPage() {
 
         {/* Podium */}
         {podium.length >= 3 && (
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 grid-cols-2 md:grid-cols-3">
             {/* 2nd */}
-            <Card className="order-2 md:order-1 border-2 shadow-shadow bg-(--neo-gray-100) flex flex-col items-center px-4 pb-4 pt-0 gap-2 text-center">
-              <div className="flex size-10 items-center justify-center border-2 border-border bg-white shadow-sm">
-                <Medal className="size-5" strokeWidth={2.5} />
+            <Card className="order-2 col-span-1 md:order-1 border-2 shadow-shadow bg-(--neo-gray-100) flex flex-col items-start px-4 pb-4 pt-0 gap-2 text-center">
+              <div className="flex gap-2 items-center justify-center">
+                <div className="flex size-10 items-center justify-center border-2 border-border bg-white shadow-sm">
+                  <Medal className="size-5" strokeWidth={2.5} />
+                </div>
+                <Badge className="bg-white text-black border-black font-black">
+                  SILVER • #2
+                </Badge>
               </div>
-              <Badge className="bg-white text-black border-black font-black">
-                SILVER • #2
-              </Badge>
-              <Avatar className="size-14 border-2 border-border rounded-none">
-                <AvatarImage src={podium[1]?.avatarUrl || undefined} />
-                <AvatarFallback className="rounded-none font-black text-lg">
-                  {(podium[1]?.displayName || "?").slice(0, 1).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <p className="font-heading font-black leading-tight">
-                {podium[1]?.displayName}
-              </p>
-              <p className="text-xs font-bold text-foreground/60">
-                {podium[1]?.city}
-              </p>
-              <p className="font-black text-lg">
-                {podium[1]?.leaderboardScore.toFixed(1)}
-              </p>
-              <Progress
-                value={
-                  podium[1]
-                    ? (podium[1].leaderboardScore /
-                        podium[0].leaderboardScore) *
-                      100
-                    : 0
-                }
-                className="h-2 [&>div]:bg-black"
-              />
+              <div className="flex items-center gap-3">
+                <Avatar className="size-10 border-2 border-border rounded-none bg-white">
+                  <AvatarImage src={podium[1]?.avatarUrl || undefined} />
+                  <AvatarFallback className="rounded-none font-black text-xl bg-white">
+                    {(podium[1]?.displayName || "?").slice(0, 1).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col items-start">
+                  <p className="font-heading text-sm font-black text-lg leading-tight">
+                    {podium[1]?.displayName}
+                  </p>
+                  <p className="text-xs font-bold">{podium[1]?.city}</p>
+                </div>
+              </div>
+              <div className="w-full flex items-center gap-2">
+                <p className="font-black text-lg">
+                  {podium[1]?.leaderboardScore.toFixed(1)}
+                </p>
+                <Progress
+                  value={
+                    podium[1]
+                      ? (podium[1].leaderboardScore /
+                          podium[0].leaderboardScore) *
+                        100
+                      : 0
+                  }
+                  className="h-2 [&>div]:bg-black"
+                />
+              </div>
             </Card>
 
             {/* 1st */}
-            <Card className="order-1 md:order-2 border-2 shadow-shadow bg-accent flex flex-col items-center px-4 pb-4 pt-0 gap-2 text-center scale-[1.02]">
-              <div className="flex size-12 items-center justify-center border-2 border-border bg-black shadow-sm">
-                <Crown className="size-6 text-accent" strokeWidth={2.5} />
+            <Card className="order-1 col-span-2 md:col-span-1 md:order-2 border-2 shadow-shadow bg-accent flex flex-col items-start px-4 pb-4 pt-0 gap-2 text-center scale-[1.02]">
+              <div className="flex gap-2 items-center justify-center">
+                <div className="flex size-12 items-center justify-center border-2 border-border bg-black shadow-sm">
+                  <Crown
+                    className="size-6 md:size-4 text-accent"
+                    strokeWidth={2.5}
+                  />
+                </div>
+                <Badge className="bg-black text-white border-black text-lg md:text-sm font-black gap-1">
+                  <Trophy className="size-6" strokeWidth={5} /> GOLD • #1
+                </Badge>
               </div>
-              <Badge className="bg-black text-white border-black font-black gap-1">
-                <Trophy className="size-3" strokeWidth={2.5} /> GOLD • #1
-              </Badge>
-              <Avatar className="size-16 border-2 border-border rounded-none bg-white">
-                <AvatarImage src={podium[0]?.avatarUrl || undefined} />
-                <AvatarFallback className="rounded-none font-black text-xl bg-white">
-                  {(podium[0]?.displayName || "?").slice(0, 1).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <p className="font-heading font-black text-lg leading-tight">
-                {podium[0]?.displayName}
-              </p>
-              <p className="text-xs font-bold">{podium[0]?.city}</p>
-              <p className="font-black text-xl">
-                {podium[0]?.leaderboardScore.toFixed(1)}
-              </p>
-              <div className="flex items-center gap-1 text-xs font-black">
-                <BarChart3 className="size-3" strokeWidth={2.5} /> Balance{" "}
-                {podium[0]?.balanceIndex.toFixed(0)}
+              <div className="flex items-center gap-3">
+                <Avatar className="size-16 md:size-12 border-2 border-border rounded-none bg-white">
+                  <AvatarImage src={podium[0]?.avatarUrl || undefined} />
+                  <AvatarFallback className="rounded-none font-black text-xl bg-white">
+                    {(podium[0]?.displayName || "?").slice(0, 1).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col items-start">
+                  <p className="font-heading font-black text-xl md:text-lg leading-tight">
+                    {podium[0]?.displayName}
+                  </p>
+                  <p className="text-lg md:text-sm font-bold">
+                    {podium[0]?.city}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <p className="font-black text-xl">
+                  {podium[0]?.leaderboardScore.toFixed(1)}
+                </p>
+                <div className="flex items-center gap-1 text-xs font-black">
+                  <BarChart3 className="size-3" strokeWidth={2.5} /> Balance{" "}
+                  {podium[0]?.balanceIndex.toFixed(0)}
+                </div>
               </div>
             </Card>
 
             {/* 3rd */}
-            <Card className="order-3 border-2 shadow-shadow bg-info text-white flex flex-col items-center px-4 pb-4 pt-0 gap-2 text-center">
-              <div className="flex size-10 items-center justify-center border-2 border-border bg-white shadow-sm">
-                <Award className="size-5 text-info" strokeWidth={2.5} />
+            <Card className="order-3 col-span-1 border-2 shadow-shadow bg-info text-white flex flex-col items-start px-4 pb-4 pt-0 gap-2 text-center">
+              <div className="flex gap-2 items-center justify-center">
+                <div className="flex size-10 items-center justify-center border-2 border-border bg-white shadow-sm">
+                  <Award className="size-5 text-info" strokeWidth={2.5} />
+                </div>
+                <Badge className="bg-white text-black border-black font-black">
+                  BRONZE • #3
+                </Badge>
               </div>
-              <Badge className="bg-white text-black border-black font-black">
-                BRONZE • #3
-              </Badge>
-              <Avatar className="size-14 border-2 border-border rounded-none bg-white">
-                <AvatarImage src={podium[2]?.avatarUrl || undefined} />
-                <AvatarFallback className="rounded-none font-black text-lg bg-white text-black">
-                  {(podium[2]?.displayName || "?").slice(0, 1).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <p className="font-heading font-black leading-tight">
-                {podium[2]?.displayName}
-              </p>
-              <p className="text-xs font-bold text-white/80">
-                {podium[2]?.city}
-              </p>
-              <p className="font-black text-lg">
-                {podium[2]?.leaderboardScore.toFixed(1)}
-              </p>
-              <Progress
-                value={
-                  podium[2]
-                    ? (podium[2].leaderboardScore /
-                        podium[0].leaderboardScore) *
-                      100
-                    : 0
-                }
-                className="h-2 bg-white/30 [&>div]:bg-white"
-              />
+              <div className="flex items-center gap-3">
+                <Avatar className="size-10 border-2 border-border rounded-none bg-white">
+                  <AvatarImage src={podium[2]?.avatarUrl || undefined} />
+                  <AvatarFallback className="rounded-none font-black text-xl bg-white">
+                    {(podium[2]?.displayName || "?").slice(0, 1).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col items-start">
+                  <p className="font-heading text-sm font-black text-lg leading-tight">
+                    {podium[2]?.displayName}
+                  </p>
+                  <p className="text-xs font-bold">{podium[2]?.city}</p>
+                </div>
+              </div>
+              <div className="w-full flex items-center gap-2">
+                <p className="font-black text-lg">
+                  {podium[2]?.leaderboardScore.toFixed(1)}
+                </p>
+                <Progress
+                  value={
+                    podium[2]
+                      ? (podium[2].leaderboardScore /
+                          podium[0].leaderboardScore) *
+                        100
+                      : 0
+                  }
+                  className="h-2 [&>div]:bg-black"
+                />
+              </div>{" "}
             </Card>
           </div>
         )}
@@ -634,7 +666,10 @@ export default function LeaderboardPage() {
             <CardTitle className="flex items-center gap-2 text-base">
               <BarChart3 className="size-4" strokeWidth={2.5} /> Leaderboard
               Table
-              <Badge variant="neutral" className="font-black border-2">
+              <Badge
+                variant="neutral"
+                className="font-black border-2 bg-accent text-black"
+              >
                 {filteredSorted.length} participants
               </Badge>
             </CardTitle>
@@ -655,7 +690,7 @@ export default function LeaderboardPage() {
                 value={sort}
                 onValueChange={(v) => setSort(v as typeof sort)}
               >
-                <SelectTrigger className="w-36 bg-white border-2 font-black">
+                <SelectTrigger className="w-36 bg-accent border-2 font-black">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -677,7 +712,7 @@ export default function LeaderboardPage() {
                         <Trophy className="size-3" strokeWidth={2.5} /> Rank
                       </span>
                     </TableHead>
-                    <TableHead className="font-black min-w-45">User</TableHead>
+                    <TableHead className="font-black">User</TableHead>
                     <TableHead className="text-right font-black">Raw</TableHead>
                     <TableHead className="text-right font-black hidden sm:table-cell">
                       Balance
@@ -695,7 +730,7 @@ export default function LeaderboardPage() {
                     <TableRow>
                       <TableCell
                         colSpan={6}
-                        className="text-center py-8 font-bold text-foreground/60"
+                        className="text-center py-6 font-bold text-foreground"
                       >
                         No results for &quot;{search}&quot;
                       </TableCell>
@@ -722,11 +757,6 @@ export default function LeaderboardPage() {
                               >
                                 {rankIcon(e.rank)}
                               </div>
-                              {isSelf && (
-                                <Badge className="bg-black text-white border-black text-[10px]">
-                                  YOU
-                                </Badge>
-                              )}
                             </div>
                           </TableCell>
                           <TableCell>
@@ -742,7 +772,6 @@ export default function LeaderboardPage() {
                               <div className="min-w-0">
                                 <p className="font-heading font-black text-sm leading-none truncate max-w-35">
                                   {e.displayName}
-                                  {isSelf && " (you)"}
                                 </p>
                                 <p className="text-xs font-bold text-foreground/60 flex items-center gap-1">
                                   <MapPin
@@ -752,6 +781,11 @@ export default function LeaderboardPage() {
                                   {e.city || "-"}
                                 </p>
                               </div>
+                              {isSelf && (
+                                <Badge className="bg-black text-white border-black text-xs font-black">
+                                  YOU
+                                </Badge>
+                              )}
                             </div>
                           </TableCell>
                           <TableCell className="text-right font-bold">
@@ -787,7 +821,7 @@ export default function LeaderboardPage() {
             <div className="flex items-center justify-between border-t-2 border-border px-4 pt-2">
               <p className="text-xs font-black">
                 Page {page + 1} / {totalPages} • {filteredSorted.length}{" "}
-                participants
+                Participants
               </p>
               <div className="flex gap-2">
                 <Button

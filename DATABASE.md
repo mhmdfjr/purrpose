@@ -99,6 +99,9 @@ Ditulis oleh `weeklyCycleJob`, read-only dari sisi client.
 | Field | Type | Catatan |
 |---|---|---|
 | `userId` | string | redundan dari document ID, disimpan sebagai field supaya bisa di-query lewat **collection group query** (misal "cari semua entry milik user X sepanjang waktu" tanpa perlu tahu `cycleId`/`groupId`-nya) |
+| `displayName` | string | denormalisasi dari `users/{uid}` — supaya client bisa tampilkan nama tanpa baca dokumen user orang lain (rules `users` owner-only) |
+| `avatarUrl` | string \| null | denormalisasi dari `users/{uid}` |
+| `city` | string | denormalisasi dari `users/{uid}` |
 | `weeklyRawScore` | number | dari `weeklyReports` user bersangkutan di minggu yang sama |
 | `balanceIndex` | number | |
 | `completionRate` | number | |

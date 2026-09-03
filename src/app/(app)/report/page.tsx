@@ -752,12 +752,6 @@ export default function ReportPage() {
                           tickMargin={8}
                           tick={{ fontSize: 12, fontWeight: 700 }}
                         />
-                        {/* <YAxis
-                          tickLine={false}
-                          axisLine={false}
-                          allowDecimals={false}
-                          tick={{ fontSize: 12 }}
-                        /> */}
                         <ChartTooltip
                           cursor={false}
                           content={<ChartTooltipContent indicator="line" />}

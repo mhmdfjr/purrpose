@@ -203,7 +203,7 @@ async function handle(req: NextRequest) {
         const u = scored[rankIdx];
         const rank = rankIdx + 1;
         const entryRef = groupRef.collection("entries").doc(u.uid);
-        batch.set(entryRef, { userId: u.uid, weeklyRawScore: u.weeklyRawScore, balanceIndex: u.balanceIndex, completionRate: u.completionRate, balanceWeight: u.balanceWeight, completionWeight: u.completionWeight, leaderboardScore: u.leaderboardScore, rank });
+        batch.set(entryRef, { userId: u.uid, displayName: u.displayName, avatarUrl: u.avatarUrl, city: u.city, weeklyRawScore: u.weeklyRawScore, balanceIndex: u.balanceIndex, completionRate: u.completionRate, balanceWeight: u.balanceWeight, completionWeight: u.completionWeight, leaderboardScore: u.leaderboardScore, rank });
         opCount++;
         const userRef = db.doc(`users/${u.uid}`);
         batch.update(userRef, { currentGroupId: groupId, currentCycleId: weekId });
